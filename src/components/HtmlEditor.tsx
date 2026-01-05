@@ -1,14 +1,18 @@
-import { useState, useCallback } from "react";
-import { Code2, Play, Copy, Trash2, FileCode, Download, Plus, X } from "lucide-react";
+import { useState, useCallback, useEffect } from "react";
+import { Code2, Play, Copy, Trash2, FileCode, Download, Plus, X, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
+import AiAgentPanel from "./AiAgentPanel";
 
 interface Tab {
   id: string;
   name: string;
   content: string;
 }
+
+const STORAGE_KEY = "html-viewer-tabs";
+const ACTIVE_TAB_KEY = "html-viewer-active-tab";
 
 const defaultHtml = `<!DOCTYPE html>
 <html lang="de">
@@ -49,12 +53,48 @@ const defaultHtml = `<!DOCTYPE html>
 </body>
 </html>`;
 
+const loadTabsFromStorage = (): Tab[] => {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch (e) {
+    console.error("Fehler beim Laden der Tabs:", e);
+  }
+  return [{ id: "1", name: "index.html", content: defaultHtml }];
+};
+
+const loadActiveTabFromStorage = (tabs: Tab[]): string => {
+  try {
+    const stored = localStorage.getItem(ACTIVE_TAB_KEY);
+    if (stored && tabs.some(t => t.id === stored)) {
+      return stored;
+    }
+  } catch (e) {
+    console.error("Fehler beim Laden des aktiven Tabs:", e);
+  }
+  return tabs[0]?.id || "1";
+};
+
 const HtmlEditor = () => {
-  const [tabs, setTabs] = useState<Tab[]>([
-    { id: "1", name: "index.html", content: defaultHtml }
-  ]);
-  const [activeTabId, setActiveTabId] = useState("1");
+  const [tabs, setTabs] = useState<Tab[]>(() => loadTabsFromStorage());
+  const [activeTabId, setActiveTabId] = useState(() => loadActiveTabFromStorage(tabs));
   const [previewKey, setPreviewKey] = useState(0);
+  const [showAiPanel, setShowAiPanel] = useState(false);
+
+  // Tabs im localStorage speichern
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(tabs));
+  }, [tabs]);
+
+  // Aktiven Tab im localStorage speichern
+  useEffect(() => {
+    localStorage.setItem(ACTIVE_TAB_KEY, activeTabId);
+  }, [activeTabId]);
 
   const activeTab = tabs.find(t => t.id === activeTabId) || tabs[0];
 
@@ -235,13 +275,21 @@ const HtmlEditor = () => {
             <Play className="w-4 h-4 mr-2" />
             Im Browser öffnen
           </Button>
+          <Button 
+            size="sm" 
+            variant={showAiPanel ? "default" : "outline"} 
+            onClick={() => setShowAiPanel(!showAiPanel)}
+          >
+            <Bot className="w-4 h-4 mr-2" />
+            KI-Agenten
+          </Button>
         </div>
       </header>
 
       {/* Main Content */}
       <div className="flex flex-1 overflow-hidden">
         {/* Editor Panel */}
-        <div className="flex flex-col w-1/2 border-r border-border">
+        <div className={`flex flex-col border-r border-border ${showAiPanel ? "w-1/3" : "w-1/2"}`}>
           {/* Tabs */}
           <div className="flex items-center bg-editor border-b border-border overflow-x-auto">
             <div className="flex items-center">
@@ -291,7 +339,7 @@ const HtmlEditor = () => {
         </div>
 
         {/* Preview Panel */}
-        <div className="flex flex-col w-1/2">
+        <div className={`flex flex-col ${showAiPanel ? "w-1/3" : "w-1/2"}`}>
           <div className="flex items-center gap-2 px-4 py-2 bg-secondary border-b border-border">
             <Play className="w-4 h-4 text-primary" />
             <span className="text-sm text-muted-foreground font-medium">Vorschau: {activeTab.name}</span>
@@ -306,6 +354,23 @@ const HtmlEditor = () => {
             />
           </div>
         </div>
+
+        {/* AI Panel */}
+        {showAiPanel && (
+          <div className="w-1/3">
+            <AiAgentPanel 
+              currentHtml={activeTab.content}
+              onHtmlUpdate={(html) => {
+                handleContentChange(html);
+                setPreviewKey(prev => prev + 1);
+                toast({
+                  title: "KI-Code generiert",
+                  description: "Der HTML-Code wurde von der KI-Pipeline erstellt.",
+                });
+              }}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
