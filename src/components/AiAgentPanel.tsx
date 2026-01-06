@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
-
+import { toast } from "@/hooks/use-toast";
 interface AgentStep {
   agent: string;
   emoji: string;
@@ -58,7 +58,50 @@ const AiAgentPanel = ({ currentHtml, onHtmlUpdate }: AiAgentPanelProps) => {
           },
         });
 
-        if (error) throw error;
+        if (error) {
+          // Check for specific error types
+          const errorMessage = error.message || String(error);
+          if (errorMessage.includes("402") || errorMessage.includes("Payment") || errorMessage.includes("credits")) {
+            toast({
+              title: "Keine Credits verfügbar",
+              description: "Bitte füge Credits hinzu unter Settings → Workspace → Usage",
+              variant: "destructive",
+            });
+            setSteps(prev => prev.map((s, idx) => 
+              idx === i ? { ...s, status: "error", output: "Keine Credits. Bitte unter Settings → Workspace → Usage aufladen." } : s
+            ));
+            break;
+          }
+          if (errorMessage.includes("429") || errorMessage.includes("Rate limit")) {
+            toast({
+              title: "Zu viele Anfragen",
+              description: "Bitte warte einen Moment und versuche es erneut.",
+              variant: "destructive",
+            });
+            setSteps(prev => prev.map((s, idx) => 
+              idx === i ? { ...s, status: "error", output: "Rate-Limit erreicht. Bitte warten." } : s
+            ));
+            break;
+          }
+          throw error;
+        }
+
+        // Check for error in data response
+        if (data?.error) {
+          const errorMsg = data.error;
+          if (errorMsg.includes("402") || errorMsg.includes("credits")) {
+            toast({
+              title: "Keine Credits verfügbar",
+              description: "Bitte füge Credits hinzu unter Settings → Workspace → Usage",
+              variant: "destructive",
+            });
+            setSteps(prev => prev.map((s, idx) => 
+              idx === i ? { ...s, status: "error", output: "Keine Credits. Bitte unter Settings → Workspace → Usage aufladen." } : s
+            ));
+            break;
+          }
+          throw new Error(errorMsg);
+        }
 
         const output = data?.output || "Keine Ausgabe";
         context = `${context}\n\n${agent.name} (${agent.role}):\n${output}`;
@@ -73,9 +116,15 @@ const AiAgentPanel = ({ currentHtml, onHtmlUpdate }: AiAgentPanelProps) => {
         }
       } catch (error) {
         console.error(`Agent ${agent.name} Fehler:`, error);
+        const errorStr = String(error);
         setSteps(prev => prev.map((s, idx) => 
-          idx === i ? { ...s, status: "error", output: String(error) } : s
+          idx === i ? { ...s, status: "error", output: errorStr } : s
         ));
+        toast({
+          title: "Pipeline-Fehler",
+          description: `Agent ${agent.name} ist fehlgeschlagen.`,
+          variant: "destructive",
+        });
         break;
       }
     }

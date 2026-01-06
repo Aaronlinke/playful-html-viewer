@@ -88,9 +88,27 @@ serve(async (req) => {
     });
 
     if (!response.ok) {
-      const error = await response.text();
-      console.error(`Agent ${agentName} API Fehler:`, error);
-      throw new Error(`API Fehler: ${response.status}`);
+      const errorText = await response.text();
+      console.error(`Agent ${agentName} API Fehler:`, response.status, errorText);
+      
+      if (response.status === 402) {
+        return new Response(
+          JSON.stringify({ error: "Keine Credits verfügbar. Bitte unter Settings → Workspace → Usage aufladen." }),
+          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      
+      if (response.status === 429) {
+        return new Response(
+          JSON.stringify({ error: "Zu viele Anfragen. Bitte warte einen Moment." }),
+          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      
+      return new Response(
+        JSON.stringify({ error: `API Fehler: ${response.status}` }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
     const data = await response.json();
