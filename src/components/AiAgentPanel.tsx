@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { 
   Bot, Send, Loader2, ChevronDown, ChevronUp, Zap, Brain, 
-  Network, Merge, Sparkles, Activity, Shield, Cpu, X
+  Network, Merge, Sparkles, Activity, Shield, Cpu, X, Skull
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import CryptoTicker from "./CryptoTicker";
 
 interface AgentStep {
   agent: string;
@@ -310,10 +311,21 @@ Liefere das PERFEKTE Ergebnis. HTML in \`\`\`html ... \`\`\` Tags.`,
       <div className="flex items-center gap-2 px-3 py-2 border-b border-border bg-gradient-to-r from-primary/10 via-purple-500/10 to-cyan-500/10">
         <Brain className="w-4 h-4 text-primary animate-pulse" />
         <span className="font-semibold text-sm">Schwarm-KI</span>
-        <Badge variant="outline" className="ml-auto text-[10px] px-1.5 py-0">
-          {AGENTS.length} Agenten
+        <a 
+          href="/brain-scanner" 
+          className="ml-auto flex items-center gap-1 text-[10px] text-green-500 hover:text-green-400 transition-colors"
+          title="Brain Wallet Scanner"
+        >
+          <Skull className="w-3 h-3" />
+          <span className="hidden sm:inline">🧠</span>
+        </a>
+        <Badge variant="outline" className="text-[10px] px-1.5 py-0">
+          {AGENTS.length}
         </Badge>
       </div>
+
+      {/* Live Crypto Ticker */}
+      <CryptoTicker selectedApis={selectedCryptoApis} />
 
       {/* Progress nur wenn aktiv */}
       {isProcessing && (
