@@ -133,4 +133,18 @@
       box-shadow: 0 0 40px hsl(160 80% 50% / 0.4);
     }
   }
+
+  /* Crypto Ticker Scroll Animation */
+  .animate-scroll-x {
+    animation: scrollX 20s linear infinite;
+  }
+
+  @keyframes scrollX {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
 }
