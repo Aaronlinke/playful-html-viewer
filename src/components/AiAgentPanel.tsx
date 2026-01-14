@@ -208,7 +208,7 @@ const AiAgentPanel = ({ currentHtml, onHtmlUpdate }: AiAgentPanelProps) => {
     setIsProcessing(false);
   };
 
-  // FUSION: Alle Agenten verschmelzen zu einem Gedanken
+  // ECHTE FUSION: Alle Agenten denken PARALLEL und werden dann verschmolzen
   const runFusionMode = async () => {
     if (!prompt.trim()) return;
 
@@ -231,65 +231,128 @@ const AiAgentPanel = ({ currentHtml, onHtmlUpdate }: AiAgentPanelProps) => {
         }).join('\n')}`
       : "";
 
+    const baseContext = `AUFGABE: ${prompt}\n\nAktueller Code:\n${currentHtml}${cryptoContext}`;
+
     try {
-      for (let i = 0; i <= 100; i += 10) {
-        setSwarmProgress(i);
-        await new Promise(resolve => setTimeout(resolve, 30));
-      }
+      // PHASE 1: Alle Agenten denken PARALLEL
+      setSwarmProgress(10);
+      
+      const agentPromises = AGENTS.map(async (agent, idx) => {
+        // Kurze Verzögerung für visuellen Effekt
+        await new Promise(resolve => setTimeout(resolve, idx * 100));
+        
+        setSteps(prev => prev.map((s, i) => 
+          i === idx ? { ...s, status: "running" } : s
+        ));
 
-      setSteps(prev => prev.map(s => ({ ...s, status: "running" })));
+        const { data, error } = await supabase.functions.invoke("ai-agent-pipeline", {
+          body: {
+            agentName: agent.name,
+            agentRole: agent.specialty,
+            context: baseContext,
+            isLastAgent: false,
+            swarmMode: "fusion-parallel",
+            cryptoApis: selectedCryptoApis.map(name => CRYPTO_APIS.find(a => a.name === name)),
+          },
+        });
 
-      const { data, error } = await supabase.functions.invoke("ai-agent-pipeline", {
+        if (error) throw error;
+        
+        const output = data?.output || "";
+        const confidence = data?.confidence || 85;
+        
+        setSteps(prev => prev.map((s, i) => 
+          i === idx ? { ...s, status: "done", output, confidence, consensus: true } : s
+        ));
+        
+        return { agent: agent.name, role: agent.specialty, emoji: agent.emoji, output, confidence };
+      });
+
+      // Warte auf ALLE Agenten
+      const allOutputs = await Promise.all(agentPromises);
+      setSwarmProgress(70);
+
+      // PHASE 2: FUSION - Alle Outputs werden verschmolzen
+      setSteps(prev => [...prev, {
+        agent: "🔮 FUSION",
+        emoji: "🔮",
+        status: "running",
+        confidence: 0
+      }]);
+
+      const fusionContext = `🔮 SCHWARM-FUSION - Kombiniere diese ${AGENTS.length} Experten-Analysen zu EINEM perfekten Ergebnis:
+
+${allOutputs.map(o => `
+═══════════════════════════════════════
+${o.emoji} AGENT ${o.agent.toUpperCase()} (${o.role}) - Konfidenz: ${o.confidence}%
+═══════════════════════════════════════
+${o.output}
+`).join('\n')}
+
+═══════════════════════════════════════
+🎯 URSPRÜNGLICHE AUFGABE: ${prompt}
+═══════════════════════════════════════
+
+DEINE AUFGABE ALS FUSION-INTELLIGENZ:
+1. Analysiere ALLE ${AGENTS.length} Agenten-Outputs
+2. Finde Gemeinsamkeiten und beste Ideen
+3. Löse eventuelle Konflikte intelligent
+4. Erstelle das FINALE, PERFEKTE Ergebnis
+5. Der Code MUSS in \`\`\`html ... \`\`\` Tags stehen
+6. KEINE Platzhalter, KEINE TODOs, VOLLSTÄNDIG!`;
+
+      const { data: fusionData, error: fusionError } = await supabase.functions.invoke("ai-agent-pipeline", {
         body: {
           agentName: "FUSION",
-          agentRole: "Kollektive Schwarm-Intelligenz",
-          context: `🔮 FUSION AKTIVIERT - Alle 7 Agenten denken als EINS
-
-AUFGABE: ${prompt}
-
-AKTUELLER CODE:
-${currentHtml}
-${cryptoContext}
-
-Du bist die VERSCHMELZUNG aller Agenten:
-🎯 Alpha (Strategie) + 🏗️ Beta (Design) + 💻 Gamma (Code) + 🔐 Delta (Blockchain) + ⚙️ Epsilon (Performance) + 🧪 Zeta (Testing) + 🚀 Omega (Fusion)
-
-Liefere das PERFEKTE Ergebnis. HTML in \`\`\`html ... \`\`\` Tags.`,
+          agentRole: "Schwarm-Verschmelzung",
+          context: fusionContext,
           isLastAgent: true,
-          swarmMode: "fusion",
+          swarmMode: "fusion-final",
           cryptoApis: selectedCryptoApis.map(name => CRYPTO_APIS.find(a => a.name === name)),
+          previousOutputs: allOutputs,
         },
       });
 
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
+      setSwarmProgress(100);
 
-      const output = data?.output || "Fusion fehlgeschlagen";
+      if (fusionError) throw fusionError;
+      if (fusionData?.error) throw new Error(fusionData.error);
+
+      const fusionOutput = fusionData?.output || "Fusion fehlgeschlagen";
       
-      setSteps(prev => prev.map(s => ({ 
-        ...s, 
-        status: "done", 
-        output: "✨ Fusioniert",
-        confidence: 99,
-        consensus: true 
-      })));
+      // Update Fusion-Step
+      setSteps(prev => prev.map((s, i) => 
+        i === prev.length - 1 
+          ? { ...s, status: "done", output: fusionOutput, confidence: 99, consensus: true }
+          : s
+      ));
 
-      setSteps(prev => {
-        const newSteps = [...prev];
-        newSteps[newSteps.length - 1] = { ...newSteps[newSteps.length - 1], output };
-        return newSteps;
-      });
-
+      // Berechne Konsens basierend auf Confidence-Werten
+      const avgConfidence = allOutputs.reduce((sum, o) => sum + o.confidence, 0) / allOutputs.length;
+      const agreements = allOutputs.filter(o => o.confidence > 80).length;
+      
       setConsensus({
-        agreements: 7,
-        disagreements: 0,
-        finalVerdict: "🔮 PERFEKTE FUSION",
-        fusedOutput: output,
+        agreements,
+        disagreements: AGENTS.length - agreements,
+        finalVerdict: avgConfidence > 85 
+          ? "🔮 PERFEKTE SCHWARM-FUSION" 
+          : avgConfidence > 70 
+          ? "✅ STARKER KONSENS" 
+          : "⚡ FUSION ABGESCHLOSSEN",
+        fusedOutput: fusionOutput,
       });
 
-      if (data?.finalHtml) {
-        onHtmlUpdate(data.finalHtml);
-        toast({ title: "🔮 Fusion erfolgreich!", description: "7 Agenten → 1 Ergebnis" });
+      if (fusionData?.finalHtml) {
+        onHtmlUpdate(fusionData.finalHtml);
+        toast({ 
+          title: "🔮 Echte Fusion erfolgreich!", 
+          description: `${AGENTS.length} Agenten → 1 perfektes Ergebnis (${Math.round(avgConfidence)}% Konsens)` 
+        });
+      } else {
+        toast({ 
+          title: "🔮 Fusion abgeschlossen", 
+          description: "Kein HTML extrahiert - Output prüfen" 
+        });
       }
 
     } catch (error) {
@@ -297,7 +360,7 @@ Liefere das PERFEKTE Ergebnis. HTML in \`\`\`html ... \`\`\` Tags.`,
       setSteps(prev => prev.map(s => ({ ...s, status: "error", output: String(error) })));
       toast({
         title: "Fusion fehlgeschlagen",
-        description: "Schwarm nicht synchron",
+        description: String(error),
         variant: "destructive",
       });
     }
