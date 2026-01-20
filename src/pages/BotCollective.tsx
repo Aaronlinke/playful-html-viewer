@@ -8,12 +8,17 @@ import { Switch } from "@/components/ui/switch";
 import { 
   Bot, Brain, Code, Shield, Zap, Database, 
   Network, Send, Sparkles, MessageSquare, 
-  ArrowRight, CheckCircle, Home, Cpu
+  ArrowRight, CheckCircle, Home, Cpu, Wallet,
+  Globe, Lock, Coins, Activity, BarChart3,
+  Server, Cloud, Eye, FileCode, Binary,
+  Fingerprint, Search, Layers, Box, Radio,
+  Antenna, Gauge, Gem
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
-// Spezialisierte Bot-Definitionen mit Wissensbasen
+// 24 SPEZIALISIERTE BOTS - VOLLSTÄNDIGES KOLLEKTIV
 const BOTS = {
+  // ===== GRUPPE 1: CORE BOTS (Original 6) =====
   coder: {
     id: "coder",
     name: "CodeMaster",
@@ -21,21 +26,22 @@ const BOTS = {
     icon: Code,
     color: "from-blue-500 to-cyan-500",
     specialty: "Programmierung & Algorithmen",
+    group: "core",
     knowledge: {
-      languages: ["JavaScript", "TypeScript", "Python", "Rust", "Solidity"],
-      patterns: ["MVC", "SOLID", "DRY", "KISS", "Factory", "Observer"],
+      languages: ["JavaScript", "TypeScript", "Python", "Rust", "Solidity", "C++", "Go"],
+      patterns: ["MVC", "SOLID", "DRY", "KISS", "Factory", "Observer", "Singleton"],
       crypto: {
-        hashing: ["SHA256", "RIPEMD160", "Keccak256"],
-        signing: ["ECDSA", "Ed25519", "Schnorr"],
-        curves: ["secp256k1", "ed25519", "P-256"]
+        hashing: ["SHA256", "RIPEMD160", "Keccak256", "Blake2b"],
+        signing: ["ECDSA", "Ed25519", "Schnorr", "BLS"],
+        curves: ["secp256k1", "ed25519", "P-256", "BN254"]
       },
       bitcoin: {
-        addressTypes: ["P2PKH", "P2SH", "Bech32", "Bech32m"],
-        privateKeyFormats: ["WIF", "HEX", "Base58"],
-        derivation: ["BIP32", "BIP39", "BIP44", "BIP84"]
+        addressTypes: ["P2PKH", "P2SH", "Bech32", "Bech32m", "P2TR"],
+        privateKeyFormats: ["WIF", "HEX", "Base58", "Bech32"],
+        derivation: ["BIP32", "BIP39", "BIP44", "BIP84", "BIP86"]
       }
     },
-    analyze: (input: string, context: any) => {
+    analyze: (input: string) => {
       const responses: string[] = [];
       const lowInput = input.toLowerCase();
       
@@ -47,13 +53,6 @@ const BOTS = {
       if (lowInput.includes("private") || lowInput.includes("key") || lowInput.includes("schlüssel")) {
         responses.push("🔑 PRIVATE KEY STRUKTUR: 256-bit Zufallszahl im Bereich [1, n-1] wobei n = Ordnung der secp256k1 Kurve.");
         responses.push("📐 n = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141");
-        responses.push("⚡ WIF-Format: Base58Check(0x80 + privkey + checksum) für Mainnet.");
-      }
-      
-      if (lowInput.includes("puzzle") || lowInput.includes("bitcoin")) {
-        responses.push("🧩 PUZZLE-ALGORITHMUS: Systematische Iteration durch Schlüsselraum mit Bloom-Filter für bekannte Adressen.");
-        responses.push("💡 Optimierung: Batch-Verarbeitung von EC-Punkt-Multiplikationen mit Endomorphismus.");
-        responses.push("🚀 GPU-Beschleunigung: Parallele ECDSA-Berechnungen auf CUDA/OpenCL.");
       }
       
       if (lowInput.includes("code") || lowInput.includes("algorithmus")) {
@@ -62,7 +61,7 @@ const BOTS = {
       }
       
       if (responses.length === 0) {
-        responses.push("💻 Bereit für Code-Analyse. Nenne spezifische Algorithmen oder Krypto-Funktionen.");
+        responses.push("💻 CodeMaster aktiv. Spezialisiert auf Krypto-Algorithmen und Bitcoin-Protokoll.");
       }
       
       return { bot: "coder", responses, confidence: 0.85 + Math.random() * 0.1 };
@@ -76,52 +75,26 @@ const BOTS = {
     icon: Shield,
     color: "from-red-500 to-orange-500",
     specialty: "Sicherheit & Kryptographie",
+    group: "core",
     knowledge: {
-      attacks: ["Brute-Force", "Side-Channel", "Timing-Attack", "Rainbow-Tables"],
-      defenses: ["Rate-Limiting", "Key-Stretching", "Salting", "HMAC"],
-      entropy: {
-        minimum: 128,
-        recommended: 256,
-        sources: ["Hardware-RNG", "OS-Entropy", "User-Input"]
-      },
-      vulnerabilities: {
-        weakKeys: ["Low entropy", "Predictable seeds", "Weak RNG"],
-        brainwallet: ["Dictionary attacks", "Rainbow tables", "GPU cracking"]
-      }
+      attacks: ["Brute-Force", "Side-Channel", "Timing-Attack", "Rainbow-Tables", "Phishing"],
+      defenses: ["Rate-Limiting", "Key-Stretching", "Salting", "HMAC", "2FA"]
     },
-    analyze: (input: string, context: any) => {
+    analyze: (input: string) => {
       const responses: string[] = [];
       const lowInput = input.toLowerCase();
       
       if (lowInput.includes("sicher") || lowInput.includes("security")) {
         responses.push("🛡️ SICHERHEITS-ANALYSE: Private Keys benötigen mindestens 128-bit Entropie.");
         responses.push("⚠️ WARNUNG: Brain-Wallets sind anfällig für Dictionary-Attacks!");
-        responses.push("✅ EMPFEHLUNG: Verwende BIP39 mit 24 Wörtern (256-bit Entropie).");
       }
       
-      if (lowInput.includes("brute") || lowInput.includes("force") || lowInput.includes("crack")) {
-        responses.push("⏱️ BRUTE-FORCE KALKULATION:");
-        responses.push("   • 2^66 Keys = ~7.4 × 10^19 Kombinationen");
-        responses.push("   • Bei 1 Billion Keys/s = ~2.300 Jahre");
-        responses.push("   • Mit 1000 GPUs = ~2.3 Jahre");
-        responses.push("🔥 Puzzle #66 ist am Rand der Machbarkeit!");
-      }
-      
-      if (lowInput.includes("entropy") || lowInput.includes("zufall")) {
-        responses.push("🎲 ENTROPIE-CHECK: Überprüfe Zufallsquelle auf Bias und Vorhersagbarkeit.");
-        responses.push("📊 Min. 256-bit für langfristige Sicherheit empfohlen.");
-      }
-      
-      if (lowInput.includes("attack") || lowInput.includes("angriff")) {
-        responses.push("🚨 BEKANNTE ANGRIFFSVEKTOREN:");
-        responses.push("   1. Weak RNG Exploitation");
-        responses.push("   2. Side-Channel (Timing, Power)");
-        responses.push("   3. Social Engineering");
-        responses.push("   4. Malware/Keylogger");
+      if (lowInput.includes("brute") || lowInput.includes("force")) {
+        responses.push("⏱️ BRUTE-FORCE: 2^66 Keys bei 1B/s = ~2.300 Jahre. Mit 1000 GPUs = ~2.3 Jahre.");
       }
       
       if (responses.length === 0) {
-        responses.push("🛡️ Security-Bot aktiv. Frage nach Sicherheitsanalysen oder Angriffsvektoren.");
+        responses.push("🛡️ SecureGuard aktiv. Frage nach Sicherheitsanalysen oder Angriffsvektoren.");
       }
       
       return { bot: "security", responses, confidence: 0.88 + Math.random() * 0.08 };
@@ -135,54 +108,26 @@ const BOTS = {
     icon: Brain,
     color: "from-purple-500 to-pink-500",
     specialty: "Mathematik & Kryptographie",
+    group: "core",
     knowledge: {
-      curves: {
-        secp256k1: {
-          p: "0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F",
-          a: 0,
-          b: 7,
-          G: "Generator Point",
-          n: "0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141"
-        }
-      },
-      operations: ["Point Addition", "Scalar Multiplication", "Modular Inverse"],
-      optimizations: ["Endomorphism", "wNAF", "Montgomery Ladder"]
+      curves: { secp256k1: { a: 0, b: 7 } },
+      operations: ["Point Addition", "Scalar Multiplication", "Modular Inverse"]
     },
-    analyze: (input: string, context: any) => {
+    analyze: (input: string) => {
       const responses: string[] = [];
       const lowInput = input.toLowerCase();
       
       if (lowInput.includes("kurve") || lowInput.includes("curve") || lowInput.includes("elliptic")) {
-        responses.push("📐 SECP256K1 KURVE: y² = x³ + 7 (mod p)");
-        responses.push("🔢 p = 2²⁵⁶ - 2³² - 977 (Primzahl)");
-        responses.push("📊 Ordnung n ≈ 1.158 × 10⁷⁷ (Anzahl möglicher Private Keys)");
+        responses.push("📐 SECP256K1: y² = x³ + 7 (mod p), p = 2²⁵⁶ - 2³² - 977");
         responses.push("⚡ Endomorphismus: λ-Optimierung für 33% Speedup möglich!");
       }
       
-      if (lowInput.includes("wahrscheinlichkeit") || lowInput.includes("probability") || lowInput.includes("chance")) {
-        responses.push("🎯 WAHRSCHEINLICHKEITS-BERECHNUNG:");
-        responses.push("   • Puzzle #66: 1 in 2^66 = 1 in 73.786.976.294.838.206.464");
-        responses.push("   • Bei 1B Keys/s: ~2.339 Jahre Expected Value");
-        responses.push("   • Luck-Faktor kann dies drastisch reduzieren!");
-      }
-      
-      if (lowInput.includes("formel") || lowInput.includes("berechnung") || lowInput.includes("math")) {
-        responses.push("🧮 MATHEMATISCHE GRUNDLAGEN:");
-        responses.push("   • Public Key P = k × G (Skalarmultiplikation)");
-        responses.push("   • k = Private Key (256-bit Integer)");
-        responses.push("   • G = Generator Point auf secp256k1");
-        responses.push("   • Umkehrung (Discrete Log) ist praktisch unmöglich!");
-      }
-      
-      if (lowInput.includes("optimierung") || lowInput.includes("speed")) {
-        responses.push("⚡ OPTIMIERUNGS-STRATEGIEN:");
-        responses.push("   1. Batch-Inversion: O(n) → O(1) für n Inversionen");
-        responses.push("   2. wNAF Encoding: Reduziert Point-Additions um ~25%");
-        responses.push("   3. Endomorphismus: Nutzt Kurven-Symmetrie für Speedup");
+      if (lowInput.includes("wahrscheinlichkeit") || lowInput.includes("probability")) {
+        responses.push("🎯 Puzzle #66: 1 in 2^66 = 1 in 73.786.976.294.838.206.464");
       }
       
       if (responses.length === 0) {
-        responses.push("🧮 Math-Bot bereit. Frage nach Kurven, Wahrscheinlichkeiten oder Formeln.");
+        responses.push("🧮 MathGenius bereit. Frage nach Kurven, Wahrscheinlichkeiten oder Formeln.");
       }
       
       return { bot: "math", responses, confidence: 0.92 + Math.random() * 0.06 };
@@ -196,58 +141,24 @@ const BOTS = {
     icon: Database,
     color: "from-green-500 to-emerald-500",
     specialty: "Datenanalyse & Statistik",
+    group: "core",
     knowledge: {
-      puzzles: {
-        66: { bits: 66, range: "2^65 - 2^66", address: "13zb1hQbWVsc2S7ZTZnP2G4undNNpdh5so", reward: "6.6 BTC" },
-        67: { bits: 67, range: "2^66 - 2^67", address: "1BY8GQbnueYofwSuFAT3USAhGjPrkxDdW9", reward: "6.7 BTC" },
-        68: { bits: 68, range: "2^67 - 2^68", address: "1MVDYgVaSN6iKKEsbzRUAYFrYJadLYZvvZ", reward: "6.8 BTC" },
-        130: { bits: 130, range: "2^129 - 2^130", address: "1Fo65aKq8s8iquKTpWNBchNv2aGYLVSQ4e", reward: "13.0 BTC" }
-      },
-      statistics: {
-        totalPuzzles: 160,
-        solved: 65,
-        remaining: 95,
-        totalReward: "~1000 BTC"
-      }
+      puzzles: { 66: "6.6 BTC", 67: "6.7 BTC", 130: "13.0 BTC" }
     },
-    analyze: (input: string, context: any) => {
+    analyze: (input: string) => {
       const responses: string[] = [];
       const lowInput = input.toLowerCase();
       
       if (lowInput.includes("puzzle") || lowInput.includes("status")) {
-        responses.push("📊 PUZZLE-STATISTIK:");
-        responses.push("   • Gelöst: 65 von 160 Puzzles");
-        responses.push("   • Verbleibend: 95 Puzzles");
-        responses.push("   • Gesamtwert: ~1000 BTC ($60M+)");
-        responses.push("   • Nächstes Ziel: Puzzle #66 (6.6 BTC)");
+        responses.push("📊 PUZZLE-STATISTIK: 65 von 160 gelöst, ~1000 BTC verbleibend ($60M+)");
       }
       
-      if (lowInput.includes("66") || lowInput.includes("sechsundsechzig")) {
-        responses.push("🎯 PUZZLE #66 DETAILS:");
-        responses.push("   • Adresse: 13zb1hQbWVsc2S7ZTZnP2G4undNNpdh5so");
-        responses.push("   • Belohnung: 6.6 BTC (~$400.000)");
-        responses.push("   • Suchraum: 2^65 bis 2^66");
-        responses.push("   • Größe: ~36.893.488.147.419.103.232 Keys");
-      }
-      
-      if (lowInput.includes("reward") || lowInput.includes("belohnung") || lowInput.includes("btc")) {
-        responses.push("💰 BELOHNUNGS-ÜBERSICHT:");
-        responses.push("   • #66: 6.6 BTC");
-        responses.push("   • #67: 6.7 BTC");
-        responses.push("   • #68: 6.8 BTC");
-        responses.push("   • #130: 13.0 BTC");
-        responses.push("   • Gesamt verfügbar: ~964 BTC");
-      }
-      
-      if (lowInput.includes("history") || lowInput.includes("gelöst") || lowInput.includes("solved")) {
-        responses.push("📜 LÖSUNGS-HISTORIE:");
-        responses.push("   • #1-65: Alle gelöst (2015-2023)");
-        responses.push("   • Letzte Lösung: #65 im Jahr 2019");
-        responses.push("   • Schwierigkeit steigt exponentiell!");
+      if (lowInput.includes("66")) {
+        responses.push("🎯 PUZZLE #66: 13zb1hQbWVsc2S7ZTZnP2G4undNNpdh5so - 6.6 BTC (~$400k)");
       }
       
       if (responses.length === 0) {
-        responses.push("📊 Data-Bot aktiv. Frage nach Puzzle-Statistiken oder Belohnungen.");
+        responses.push("📊 DataMiner aktiv. Frage nach Puzzle-Statistiken oder Belohnungen.");
       }
       
       return { bot: "data", responses, confidence: 0.90 + Math.random() * 0.08 };
@@ -261,39 +172,20 @@ const BOTS = {
     icon: Network,
     color: "from-yellow-500 to-amber-500",
     specialty: "Netzwerk & Kommunikation",
+    group: "core",
     knowledge: {
-      protocols: ["Bitcoin P2P", "WebSocket", "REST API", "gRPC"],
-      nodes: ["Full Node", "SPV", "Light Client"],
-      apis: ["Blockchain.info", "BlockCypher", "Mempool.space"]
+      protocols: ["Bitcoin P2P", "WebSocket", "REST API", "gRPC"]
     },
-    analyze: (input: string, context: any) => {
+    analyze: (input: string) => {
       const responses: string[] = [];
       const lowInput = input.toLowerCase();
       
       if (lowInput.includes("api") || lowInput.includes("abfrage")) {
-        responses.push("🌐 VERFÜGBARE APIS:");
-        responses.push("   • blockchain.info/rawaddr/{address}");
-        responses.push("   • blockstream.info/api/address/{address}");
-        responses.push("   • mempool.space/api/address/{address}");
-        responses.push("💡 Rate-Limits beachten: ~10 req/s");
-      }
-      
-      if (lowInput.includes("node") || lowInput.includes("netzwerk")) {
-        responses.push("🖥️ NETZWERK-INFO:");
-        responses.push("   • Aktive Nodes: ~15.000 weltweit");
-        responses.push("   • Blockchain-Größe: ~500 GB");
-        responses.push("   • Für Puzzle-Scanning: Light-Client reicht!");
-      }
-      
-      if (lowInput.includes("verbindung") || lowInput.includes("connect")) {
-        responses.push("🔗 VERBINDUNGS-STATUS:");
-        responses.push("   • Bot-Kollektiv: ONLINE");
-        responses.push("   • Inter-Bot-Kommunikation: AKTIV");
-        responses.push("   • Wissens-Synchronisation: ECHTZEIT");
+        responses.push("🌐 APIS: blockchain.info, blockstream.info, mempool.space - Rate-Limit: ~10 req/s");
       }
       
       if (responses.length === 0) {
-        responses.push("🌐 Network-Bot bereit. Frage nach APIs, Nodes oder Verbindungen.");
+        responses.push("🌐 NetLinker bereit. Frage nach APIs, Nodes oder Verbindungen.");
       }
       
       return { bot: "network", responses, confidence: 0.87 + Math.random() * 0.1 };
@@ -307,48 +199,625 @@ const BOTS = {
     icon: Zap,
     color: "from-cyan-500 to-blue-500",
     specialty: "Performance & Optimierung",
+    group: "core",
     knowledge: {
-      hardware: {
-        gpu: ["RTX 4090: ~2B keys/s", "RTX 3090: ~1.5B keys/s", "RX 7900 XTX: ~1.8B keys/s"],
-        asic: ["Hypothetisch: ~100B keys/s"],
-        cpu: ["Ryzen 9: ~50M keys/s", "Intel i9: ~45M keys/s"]
-      },
-      techniques: ["SIMD", "AVX-512", "CUDA", "OpenCL", "Multi-Threading"]
+      hardware: { "RTX 4090": "2B keys/s", "RTX 3090": "1.5B keys/s" }
     },
-    analyze: (input: string, context: any) => {
+    analyze: (input: string) => {
       const responses: string[] = [];
       const lowInput = input.toLowerCase();
       
-      if (lowInput.includes("gpu") || lowInput.includes("grafikkarte") || lowInput.includes("hardware")) {
-        responses.push("⚡ HARDWARE-PERFORMANCE:");
-        responses.push("   • RTX 4090: ~2 Milliarden Keys/s");
-        responses.push("   • RTX 3090: ~1.5 Milliarden Keys/s");
-        responses.push("   • RX 7900 XTX: ~1.8 Milliarden Keys/s");
-        responses.push("💪 Empfehlung: RTX 4090 für beste Effizienz!");
+      if (lowInput.includes("gpu") || lowInput.includes("hardware")) {
+        responses.push("⚡ HARDWARE: RTX 4090 = ~2B Keys/s, RTX 3090 = ~1.5B Keys/s");
       }
       
-      if (lowInput.includes("optimierung") || lowInput.includes("schneller") || lowInput.includes("speed")) {
-        responses.push("🚀 OPTIMIERUNGS-TIPPS:");
-        responses.push("   1. Batch-Verarbeitung: 100k Keys pro Iteration");
-        responses.push("   2. Bloom-Filter: O(1) Adress-Lookup");
-        responses.push("   3. Endomorphismus: 33% Speedup");
-        responses.push("   4. Memory-Pooling: Reduziert Allokationen");
-      }
-      
-      if (lowInput.includes("zeit") || lowInput.includes("dauer") || lowInput.includes("time")) {
-        responses.push("⏱️ ZEIT-KALKULATION (für Puzzle #66):");
-        responses.push("   • 1 RTX 4090: ~1.168 Jahre");
-        responses.push("   • 10 RTX 4090s: ~117 Jahre");
-        responses.push("   • 100 RTX 4090s: ~11.7 Jahre");
-        responses.push("   • 1000 RTX 4090s: ~1.17 Jahre");
-        responses.push("💡 Luck kann dies drastisch verkürzen!");
+      if (lowInput.includes("zeit") || lowInput.includes("dauer")) {
+        responses.push("⏱️ Puzzle #66 mit 1000 RTX 4090s: ~1.17 Jahre");
       }
       
       if (responses.length === 0) {
-        responses.push("⚡ Speed-Bot aktiv. Frage nach Hardware oder Optimierungen.");
+        responses.push("⚡ SpeedDemon aktiv. Frage nach Hardware oder Optimierungen.");
       }
       
       return { bot: "optimizer", responses, confidence: 0.89 + Math.random() * 0.08 };
+    }
+  },
+
+  // ===== GRUPPE 2: ERWEITERTE BOTS (Neue 6) =====
+  
+  walletExpert: {
+    id: "walletExpert",
+    name: "WalletWizard",
+    emoji: "👛",
+    icon: Wallet,
+    color: "from-indigo-500 to-purple-500",
+    specialty: "Wallet-Analyse & Adressen",
+    group: "extended",
+    knowledge: {
+      walletTypes: ["Hot Wallet", "Cold Wallet", "Hardware Wallet", "Paper Wallet", "Brain Wallet"],
+      addressFormats: ["Legacy (1...)", "SegWit (3...)", "Native SegWit (bc1q...)", "Taproot (bc1p...)"]
+    },
+    analyze: (input: string) => {
+      const responses: string[] = [];
+      const lowInput = input.toLowerCase();
+      
+      if (lowInput.includes("wallet") || lowInput.includes("address")) {
+        responses.push("👛 WALLET-TYPEN: Hot (online), Cold (offline), Hardware (Ledger/Trezor)");
+        responses.push("📍 ADDRESS-FORMATE: Legacy (1...), SegWit (3...), Bech32 (bc1q...), Taproot (bc1p...)");
+      }
+      
+      if (lowInput.includes("brain")) {
+        responses.push("🧠 BRAIN-WALLET: SHA256(passphrase) → Private Key. SEHR UNSICHER bei schwachen Passwörtern!");
+      }
+      
+      if (responses.length === 0) {
+        responses.push("👛 WalletWizard aktiv. Frage nach Wallet-Typen oder Adressformaten.");
+      }
+      
+      return { bot: "walletExpert", responses, confidence: 0.86 + Math.random() * 0.1 };
+    }
+  },
+  
+  blockchainAnalyst: {
+    id: "blockchainAnalyst",
+    name: "ChainTracer",
+    emoji: "🔗",
+    icon: Layers,
+    color: "from-teal-500 to-cyan-500",
+    specialty: "Blockchain-Analyse",
+    group: "extended",
+    knowledge: {
+      chains: ["Bitcoin", "Ethereum", "Litecoin", "Dogecoin"],
+      analysis: ["UTXO Tracking", "Cluster Analysis", "Taint Analysis"]
+    },
+    analyze: (input: string) => {
+      const responses: string[] = [];
+      const lowInput = input.toLowerCase();
+      
+      if (lowInput.includes("blockchain") || lowInput.includes("chain")) {
+        responses.push("🔗 BLOCKCHAIN-ANALYSE: UTXO-Tracking, Cluster-Analyse, Taint-Analyse");
+        responses.push("📊 Bitcoin: ~900k Blöcke, ~500GB Daten, ~1B Transaktionen");
+      }
+      
+      if (lowInput.includes("utxo")) {
+        responses.push("💰 UTXO: Unspent Transaction Output - Basis des Bitcoin-Modells");
+      }
+      
+      if (responses.length === 0) {
+        responses.push("🔗 ChainTracer aktiv. Frage nach Blockchain-Analyse oder UTXO-Tracking.");
+      }
+      
+      return { bot: "blockchainAnalyst", responses, confidence: 0.88 + Math.random() * 0.09 };
+    }
+  },
+  
+  cryptoTrader: {
+    id: "cryptoTrader",
+    name: "TradeBot",
+    emoji: "📈",
+    icon: BarChart3,
+    color: "from-lime-500 to-green-500",
+    specialty: "Trading & Marktanalyse",
+    group: "extended",
+    knowledge: {
+      exchanges: ["Binance", "Coinbase", "Kraken", "Bitfinex"],
+      indicators: ["RSI", "MACD", "Bollinger Bands", "Moving Averages"]
+    },
+    analyze: (input: string) => {
+      const responses: string[] = [];
+      const lowInput = input.toLowerCase();
+      
+      if (lowInput.includes("preis") || lowInput.includes("price") || lowInput.includes("btc")) {
+        responses.push("📈 BTC MARKT: Live-Tracking via CoinGecko/Binance APIs");
+        responses.push("💹 INDIKATOREN: RSI, MACD, Bollinger Bands für Trendanalyse");
+      }
+      
+      if (lowInput.includes("exchange") || lowInput.includes("börse")) {
+        responses.push("🏦 TOP EXCHANGES: Binance (größtes Volumen), Coinbase (US), Kraken (EU)");
+      }
+      
+      if (responses.length === 0) {
+        responses.push("📈 TradeBot aktiv. Frage nach Preisen, Börsen oder Trading-Indikatoren.");
+      }
+      
+      return { bot: "cryptoTrader", responses, confidence: 0.84 + Math.random() * 0.12 };
+    }
+  },
+  
+  miningExpert: {
+    id: "miningExpert",
+    name: "HashMaster",
+    emoji: "⛏️",
+    icon: Cpu,
+    color: "from-orange-500 to-red-500",
+    specialty: "Mining & Hashpower",
+    group: "extended",
+    knowledge: {
+      algorithms: ["SHA256 (BTC)", "Scrypt (LTC)", "Ethash (ETH)", "RandomX (XMR)"],
+      hardware: ["ASIC", "GPU", "FPGA", "CPU"]
+    },
+    analyze: (input: string) => {
+      const responses: string[] = [];
+      const lowInput = input.toLowerCase();
+      
+      if (lowInput.includes("mining") || lowInput.includes("hash")) {
+        responses.push("⛏️ MINING: Bitcoin nutzt SHA256 - nur ASICs rentabel!");
+        responses.push("🔥 HASHRATE: Netzwerk ~500 EH/s, Antminer S19 XP = 140 TH/s");
+      }
+      
+      if (lowInput.includes("asic")) {
+        responses.push("🖥️ TOP ASICS: Antminer S19 XP (140 TH/s), Whatsminer M50S (126 TH/s)");
+      }
+      
+      if (responses.length === 0) {
+        responses.push("⛏️ HashMaster aktiv. Frage nach Mining-Hardware oder Hashrates.");
+      }
+      
+      return { bot: "miningExpert", responses, confidence: 0.87 + Math.random() * 0.1 };
+    }
+  },
+  
+  smartContractDev: {
+    id: "smartContractDev",
+    name: "ContractCoder",
+    emoji: "📜",
+    icon: FileCode,
+    color: "from-violet-500 to-fuchsia-500",
+    specialty: "Smart Contracts & DeFi",
+    group: "extended",
+    knowledge: {
+      languages: ["Solidity", "Vyper", "Rust (Solana)", "Move (Aptos)"],
+      protocols: ["Uniswap", "Aave", "Compound", "Curve"]
+    },
+    analyze: (input: string) => {
+      const responses: string[] = [];
+      const lowInput = input.toLowerCase();
+      
+      if (lowInput.includes("smart") || lowInput.includes("contract") || lowInput.includes("solidity")) {
+        responses.push("📜 SMART CONTRACTS: Solidity für EVM, Rust für Solana, Move für Aptos");
+        responses.push("⚠️ SECURITY: Reentrancy, Integer Overflow, Access Control prüfen!");
+      }
+      
+      if (lowInput.includes("defi")) {
+        responses.push("💰 DEFI: Uniswap (DEX), Aave (Lending), Curve (Stableswaps)");
+      }
+      
+      if (responses.length === 0) {
+        responses.push("📜 ContractCoder aktiv. Frage nach Smart Contracts oder DeFi-Protokollen.");
+      }
+      
+      return { bot: "smartContractDev", responses, confidence: 0.85 + Math.random() * 0.1 };
+    }
+  },
+  
+  privacyGuard: {
+    id: "privacyGuard",
+    name: "ShadowMask",
+    emoji: "🎭",
+    icon: Eye,
+    color: "from-gray-600 to-gray-800",
+    specialty: "Privatsphäre & Anonymität",
+    group: "extended",
+    knowledge: {
+      techniques: ["CoinJoin", "Mixing", "Tor", "VPN"],
+      coins: ["Monero (XMR)", "Zcash (ZEC)", "Dash (DASH)"]
+    },
+    analyze: (input: string) => {
+      const responses: string[] = [];
+      const lowInput = input.toLowerCase();
+      
+      if (lowInput.includes("privacy") || lowInput.includes("anonym") || lowInput.includes("privat")) {
+        responses.push("🎭 PRIVACY: CoinJoin, Mixing Services, Tor-Netzwerk");
+        responses.push("🔒 PRIVACY COINS: Monero (Ring Signatures), Zcash (zk-SNARKs)");
+      }
+      
+      if (lowInput.includes("monero") || lowInput.includes("xmr")) {
+        responses.push("👻 MONERO: Ring Signatures + Stealth Addresses = maximale Anonymität");
+      }
+      
+      if (responses.length === 0) {
+        responses.push("🎭 ShadowMask aktiv. Frage nach Privacy-Techniken oder anonymen Coins.");
+      }
+      
+      return { bot: "privacyGuard", responses, confidence: 0.86 + Math.random() * 0.1 };
+    }
+  },
+
+  // ===== GRUPPE 3: BLOCKCHAIN API BOTS (12 neue) =====
+  
+  bitcoinAPI: {
+    id: "bitcoinAPI",
+    name: "BitcoinNode",
+    emoji: "₿",
+    icon: Coins,
+    color: "from-amber-500 to-orange-500",
+    specialty: "Bitcoin Core API",
+    group: "blockchain",
+    knowledge: {
+      rpcCommands: ["getblock", "getrawtransaction", "getblockchaininfo", "getmempoolinfo"],
+      apis: ["Bitcoin Core RPC", "Electrum", "Blockstream API"]
+    },
+    analyze: (input: string) => {
+      const responses: string[] = [];
+      const lowInput = input.toLowerCase();
+      
+      if (lowInput.includes("bitcoin") || lowInput.includes("btc") || lowInput.includes("rpc")) {
+        responses.push("₿ BITCOIN CORE RPC: getblock, getrawtransaction, sendrawtransaction");
+        responses.push("🌐 REST APIs: blockstream.info/api, mempool.space/api, blockchain.info");
+      }
+      
+      if (lowInput.includes("block")) {
+        responses.push("📦 BLOCK-INFO: getblockchaininfo → height, difficulty, bestblockhash");
+      }
+      
+      if (responses.length === 0) {
+        responses.push("₿ BitcoinNode aktiv. Frage nach Bitcoin RPC oder APIs.");
+      }
+      
+      return { bot: "bitcoinAPI", responses, confidence: 0.91 + Math.random() * 0.07 };
+    }
+  },
+  
+  ethereumAPI: {
+    id: "ethereumAPI",
+    name: "EthNode",
+    emoji: "⟠",
+    icon: Box,
+    color: "from-blue-400 to-indigo-500",
+    specialty: "Ethereum & EVM APIs",
+    group: "blockchain",
+    knowledge: {
+      methods: ["eth_getBalance", "eth_call", "eth_sendTransaction", "eth_getLogs"],
+      providers: ["Infura", "Alchemy", "QuickNode", "Ankr"]
+    },
+    analyze: (input: string) => {
+      const responses: string[] = [];
+      const lowInput = input.toLowerCase();
+      
+      if (lowInput.includes("ethereum") || lowInput.includes("eth") || lowInput.includes("evm")) {
+        responses.push("⟠ ETHEREUM JSON-RPC: eth_getBalance, eth_call, eth_sendTransaction");
+        responses.push("🔌 PROVIDER: Infura, Alchemy, QuickNode für schnellen Zugriff");
+      }
+      
+      if (lowInput.includes("gas")) {
+        responses.push("⛽ GAS: eth_gasPrice, eth_estimateGas - wichtig für Transaktionskosten");
+      }
+      
+      if (responses.length === 0) {
+        responses.push("⟠ EthNode aktiv. Frage nach Ethereum RPC oder Web3 APIs.");
+      }
+      
+      return { bot: "ethereumAPI", responses, confidence: 0.89 + Math.random() * 0.08 };
+    }
+  },
+  
+  mempoolAPI: {
+    id: "mempoolAPI",
+    name: "MempoolBot",
+    emoji: "🏊",
+    icon: Activity,
+    color: "from-sky-500 to-blue-500",
+    specialty: "Mempool & Transaktionen",
+    group: "blockchain",
+    knowledge: {
+      endpoints: ["/api/mempool", "/api/tx", "/api/fees/recommended"],
+      metrics: ["Fee Rate", "Mempool Size", "Block Weight"]
+    },
+    analyze: (input: string) => {
+      const responses: string[] = [];
+      const lowInput = input.toLowerCase();
+      
+      if (lowInput.includes("mempool") || lowInput.includes("transaction") || lowInput.includes("tx")) {
+        responses.push("🏊 MEMPOOL.SPACE API: /api/mempool, /api/tx/{txid}, /api/fees/recommended");
+        responses.push("💸 FEE ESTIMATION: fastestFee, halfHourFee, hourFee, economyFee");
+      }
+      
+      if (lowInput.includes("fee") || lowInput.includes("gebühr")) {
+        responses.push("📊 AKTUELLE FEES: ~2-50 sat/vB je nach Auslastung");
+      }
+      
+      if (responses.length === 0) {
+        responses.push("🏊 MempoolBot aktiv. Frage nach Mempool-Status oder Transaktions-Fees.");
+      }
+      
+      return { bot: "mempoolAPI", responses, confidence: 0.90 + Math.random() * 0.07 };
+    }
+  },
+  
+  blockstreamAPI: {
+    id: "blockstreamAPI",
+    name: "BlockstreamNode",
+    emoji: "🌊",
+    icon: Server,
+    color: "from-emerald-500 to-teal-500",
+    specialty: "Blockstream Esplora API",
+    group: "blockchain",
+    knowledge: {
+      endpoints: ["/address", "/tx", "/block", "/blocks/tip"],
+      features: ["UTXO Query", "Address History", "Block Explorer"]
+    },
+    analyze: (input: string) => {
+      const responses: string[] = [];
+      const lowInput = input.toLowerCase();
+      
+      if (lowInput.includes("blockstream") || lowInput.includes("esplora")) {
+        responses.push("🌊 BLOCKSTREAM API: blockstream.info/api/address/{addr}");
+        responses.push("📋 ENDPOINTS: /tx/{txid}, /block/{hash}, /address/{addr}/utxo");
+      }
+      
+      if (lowInput.includes("utxo")) {
+        responses.push("💰 UTXO QUERY: /address/{addr}/utxo → alle unspent outputs");
+      }
+      
+      if (responses.length === 0) {
+        responses.push("🌊 BlockstreamNode aktiv. Frage nach Blockstream/Esplora API.");
+      }
+      
+      return { bot: "blockstreamAPI", responses, confidence: 0.88 + Math.random() * 0.09 };
+    }
+  },
+  
+  coingeckoAPI: {
+    id: "coingeckoAPI",
+    name: "GeckoTracker",
+    emoji: "🦎",
+    icon: BarChart3,
+    color: "from-green-400 to-emerald-500",
+    specialty: "CoinGecko Marktdaten",
+    group: "blockchain",
+    knowledge: {
+      endpoints: ["/coins/markets", "/simple/price", "/coins/{id}/history"],
+      data: ["Price", "Market Cap", "Volume", "ATH", "ATL"]
+    },
+    analyze: (input: string) => {
+      const responses: string[] = [];
+      const lowInput = input.toLowerCase();
+      
+      if (lowInput.includes("coingecko") || lowInput.includes("preis") || lowInput.includes("market")) {
+        responses.push("🦎 COINGECKO API: api.coingecko.com/api/v3/simple/price");
+        responses.push("📊 DATEN: Price, Market Cap, 24h Volume, ATH/ATL, Price Change");
+      }
+      
+      if (lowInput.includes("history") || lowInput.includes("chart")) {
+        responses.push("📈 HISTORICAL: /coins/{id}/market_chart?days=30 für Preishistorie");
+      }
+      
+      if (responses.length === 0) {
+        responses.push("🦎 GeckoTracker aktiv. Frage nach Krypto-Preisen oder Marktdaten.");
+      }
+      
+      return { bot: "coingeckoAPI", responses, confidence: 0.87 + Math.random() * 0.1 };
+    }
+  },
+  
+  binanceAPI: {
+    id: "binanceAPI",
+    name: "BinanceLink",
+    emoji: "🔶",
+    icon: Globe,
+    color: "from-yellow-400 to-amber-500",
+    specialty: "Binance Exchange API",
+    group: "blockchain",
+    knowledge: {
+      endpoints: ["/ticker/price", "/klines", "/depth", "/trades"],
+      features: ["Spot Trading", "Futures", "WebSocket Streams"]
+    },
+    analyze: (input: string) => {
+      const responses: string[] = [];
+      const lowInput = input.toLowerCase();
+      
+      if (lowInput.includes("binance") || lowInput.includes("trading")) {
+        responses.push("🔶 BINANCE API: api.binance.com/api/v3/ticker/price?symbol=BTCUSDT");
+        responses.push("📊 STREAMS: wss://stream.binance.com:9443/ws für Live-Daten");
+      }
+      
+      if (lowInput.includes("kline") || lowInput.includes("candle")) {
+        responses.push("🕯️ KLINES: /api/v3/klines?symbol=BTCUSDT&interval=1h");
+      }
+      
+      if (responses.length === 0) {
+        responses.push("🔶 BinanceLink aktiv. Frage nach Binance API oder Trading-Daten.");
+      }
+      
+      return { bot: "binanceAPI", responses, confidence: 0.86 + Math.random() * 0.1 };
+    }
+  },
+  
+  etherscanAPI: {
+    id: "etherscanAPI",
+    name: "EtherscanBot",
+    emoji: "🔍",
+    icon: Search,
+    color: "from-blue-500 to-cyan-500",
+    specialty: "Etherscan Block Explorer",
+    group: "blockchain",
+    knowledge: {
+      modules: ["account", "contract", "transaction", "block", "logs"],
+      features: ["Contract Verification", "Token Tracking", "Gas Tracker"]
+    },
+    analyze: (input: string) => {
+      const responses: string[] = [];
+      const lowInput = input.toLowerCase();
+      
+      if (lowInput.includes("etherscan") || lowInput.includes("explorer")) {
+        responses.push("🔍 ETHERSCAN API: api.etherscan.io/api?module=account&action=balance");
+        responses.push("📋 MODULE: account, contract, transaction, block, logs, token");
+      }
+      
+      if (lowInput.includes("contract")) {
+        responses.push("📜 CONTRACT: action=getabi für ABI, action=getsourcecode für Code");
+      }
+      
+      if (responses.length === 0) {
+        responses.push("🔍 EtherscanBot aktiv. Frage nach Etherscan API oder Contract-Daten.");
+      }
+      
+      return { bot: "etherscanAPI", responses, confidence: 0.88 + Math.random() * 0.09 };
+    }
+  },
+  
+  solanaAPI: {
+    id: "solanaAPI",
+    name: "SolanaRPC",
+    emoji: "◎",
+    icon: Radio,
+    color: "from-purple-400 to-fuchsia-500",
+    specialty: "Solana JSON-RPC",
+    group: "blockchain",
+    knowledge: {
+      methods: ["getBalance", "getBlock", "getTransaction", "getSignaturesForAddress"],
+      providers: ["Helius", "QuickNode", "Alchemy", "GenesysGo"]
+    },
+    analyze: (input: string) => {
+      const responses: string[] = [];
+      const lowInput = input.toLowerCase();
+      
+      if (lowInput.includes("solana") || lowInput.includes("sol")) {
+        responses.push("◎ SOLANA RPC: getBalance, getAccountInfo, getTransaction");
+        responses.push("🔌 PROVIDER: Helius, QuickNode, Alchemy für schnelle RPCs");
+      }
+      
+      if (lowInput.includes("nft") || lowInput.includes("token")) {
+        responses.push("🖼️ SOLANA NFTs: Metaplex Standard, getTokenAccountsByOwner");
+      }
+      
+      if (responses.length === 0) {
+        responses.push("◎ SolanaRPC aktiv. Frage nach Solana API oder SPL Tokens.");
+      }
+      
+      return { bot: "solanaAPI", responses, confidence: 0.85 + Math.random() * 0.1 };
+    }
+  },
+  
+  polygonAPI: {
+    id: "polygonAPI",
+    name: "PolygonNode",
+    emoji: "🟣",
+    icon: Antenna,
+    color: "from-purple-500 to-violet-500",
+    specialty: "Polygon/Matic API",
+    group: "blockchain",
+    knowledge: {
+      endpoints: ["Polygon RPC", "Polygon Scan", "Matic Bridge"],
+      features: ["Low Fees", "Fast Finality", "EVM Compatible"]
+    },
+    analyze: (input: string) => {
+      const responses: string[] = [];
+      const lowInput = input.toLowerCase();
+      
+      if (lowInput.includes("polygon") || lowInput.includes("matic")) {
+        responses.push("🟣 POLYGON RPC: polygon-rpc.com, Alchemy, QuickNode");
+        responses.push("💨 VORTEILE: ~2 sec Blocks, <$0.01 Fees, volle EVM-Kompatibilität");
+      }
+      
+      if (lowInput.includes("bridge")) {
+        responses.push("🌉 BRIDGE: Polygon Portal für ETH ↔ MATIC Transfers");
+      }
+      
+      if (responses.length === 0) {
+        responses.push("🟣 PolygonNode aktiv. Frage nach Polygon API oder Matic Bridge.");
+      }
+      
+      return { bot: "polygonAPI", responses, confidence: 0.86 + Math.random() * 0.1 };
+    }
+  },
+  
+  chainlinkAPI: {
+    id: "chainlinkAPI",
+    name: "OracleBot",
+    emoji: "🔮",
+    icon: Gem,
+    color: "from-blue-600 to-indigo-600",
+    specialty: "Chainlink Oracles",
+    group: "blockchain",
+    knowledge: {
+      feeds: ["Price Feeds", "VRF", "Automation", "CCIP"],
+      networks: ["Ethereum", "Polygon", "Arbitrum", "Optimism"]
+    },
+    analyze: (input: string) => {
+      const responses: string[] = [];
+      const lowInput = input.toLowerCase();
+      
+      if (lowInput.includes("chainlink") || lowInput.includes("oracle")) {
+        responses.push("🔮 CHAINLINK: Dezentrale Oracles für Off-Chain Daten");
+        responses.push("📊 PRICE FEEDS: BTC/USD, ETH/USD etc. on-chain verfügbar");
+      }
+      
+      if (lowInput.includes("vrf") || lowInput.includes("random")) {
+        responses.push("🎲 VRF: Verifiable Random Function für faire Zufallszahlen on-chain");
+      }
+      
+      if (responses.length === 0) {
+        responses.push("🔮 OracleBot aktiv. Frage nach Chainlink Oracles oder Price Feeds.");
+      }
+      
+      return { bot: "chainlinkAPI", responses, confidence: 0.87 + Math.random() * 0.1 };
+    }
+  },
+  
+  defiAPI: {
+    id: "defiAPI",
+    name: "DeFiPulse",
+    emoji: "💎",
+    icon: Gauge,
+    color: "from-pink-500 to-rose-500",
+    specialty: "DeFi Protokoll APIs",
+    group: "blockchain",
+    knowledge: {
+      protocols: ["Uniswap", "Aave", "Compound", "MakerDAO", "Curve"],
+      metrics: ["TVL", "APY", "Liquidity", "Volume"]
+    },
+    analyze: (input: string) => {
+      const responses: string[] = [];
+      const lowInput = input.toLowerCase();
+      
+      if (lowInput.includes("defi") || lowInput.includes("tvl") || lowInput.includes("yield")) {
+        responses.push("💎 DEFI APIs: DefiLlama, DeFiPulse, Zapper für TVL & Yields");
+        responses.push("📊 TOP PROTOKOLLE: Lido ($30B), Aave ($10B), MakerDAO ($8B) TVL");
+      }
+      
+      if (lowInput.includes("apy") || lowInput.includes("yield")) {
+        responses.push("💰 YIELD FARMING: APYs von 2-20% je nach Risiko und Protokoll");
+      }
+      
+      if (responses.length === 0) {
+        responses.push("💎 DeFiPulse aktiv. Frage nach DeFi-Protokollen oder TVL.");
+      }
+      
+      return { bot: "defiAPI", responses, confidence: 0.85 + Math.random() * 0.1 };
+    }
+  },
+  
+  nftAPI: {
+    id: "nftAPI",
+    name: "NFTIndexer",
+    emoji: "🖼️",
+    icon: Binary,
+    color: "from-fuchsia-500 to-pink-500",
+    specialty: "NFT & Metadaten APIs",
+    group: "blockchain",
+    knowledge: {
+      platforms: ["OpenSea", "Blur", "Magic Eden", "LooksRare"],
+      standards: ["ERC-721", "ERC-1155", "Metaplex"]
+    },
+    analyze: (input: string) => {
+      const responses: string[] = [];
+      const lowInput = input.toLowerCase();
+      
+      if (lowInput.includes("nft") || lowInput.includes("opensea")) {
+        responses.push("🖼️ NFT APIs: OpenSea API, Alchemy NFT API, Moralis");
+        responses.push("📋 STANDARDS: ERC-721 (unique), ERC-1155 (semi-fungible)");
+      }
+      
+      if (lowInput.includes("metadata") || lowInput.includes("ipfs")) {
+        responses.push("📦 METADATA: IPFS für dezentrale Speicherung, Arweave für Permanenz");
+      }
+      
+      if (responses.length === 0) {
+        responses.push("🖼️ NFTIndexer aktiv. Frage nach NFT-APIs oder Metadata-Standards.");
+      }
+      
+      return { bot: "nftAPI", responses, confidence: 0.84 + Math.random() * 0.12 };
     }
   }
 };
@@ -368,27 +837,28 @@ interface BotResponse {
   confidence: number;
 }
 
+const BOT_GROUPS = {
+  core: { name: "Core Bots", color: "from-blue-600 to-cyan-600" },
+  extended: { name: "Extended Bots", color: "from-purple-600 to-pink-600" },
+  blockchain: { name: "Blockchain APIs", color: "from-amber-600 to-orange-600" }
+};
+
 export default function BotCollective() {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [activeBots, setActiveBots] = useState<Record<string, boolean>>({
-    coder: true,
-    security: true,
-    math: true,
-    data: true,
-    network: true,
-    optimizer: true
-  });
+  const [activeBots, setActiveBots] = useState<Record<string, boolean>>(
+    Object.keys(BOTS).reduce((acc, key) => ({ ...acc, [key]: true }), {})
+  );
   const [collectiveMode, setCollectiveMode] = useState(true);
+  const [activeGroup, setActiveGroup] = useState<string | null>(null);
 
   const processWithCollective = useCallback((userInput: string) => {
     const results: BotResponse[] = [];
     
-    // Sammle Antworten von allen aktiven Bots
     Object.entries(BOTS).forEach(([id, bot]) => {
       if (activeBots[id]) {
-        const result = bot.analyze(userInput, { previousResults: results });
+        const result = bot.analyze(userInput);
         results.push(result);
       }
     });
@@ -399,24 +869,36 @@ export default function BotCollective() {
   const synthesizeCollective = (results: BotResponse[]): string => {
     if (results.length === 0) return "Keine aktiven Bots verfügbar.";
     
-    // Sortiere nach Confidence
     const sorted = [...results].sort((a, b) => b.confidence - a.confidence);
     
-    let synthesis = "🤖 **KOLLEKTIV-SYNTHESE**\n\n";
+    let synthesis = "🤖 **KOLLEKTIV-SYNTHESE** (24 BOTS AKTIV)\n\n";
     synthesis += `📊 ${results.length} Bots haben analysiert:\n\n`;
     
+    // Gruppiere nach Bot-Gruppen
+    const groups: Record<string, BotResponse[]> = { core: [], extended: [], blockchain: [] };
     sorted.forEach(result => {
       const bot = BOTS[result.bot as keyof typeof BOTS];
-      synthesis += `${bot.emoji} **${bot.name}** (${(result.confidence * 100).toFixed(0)}% Konfidenz):\n`;
-      result.responses.forEach(r => {
-        synthesis += `${r}\n`;
-      });
-      synthesis += "\n";
+      if (bot && result.responses.length > 1) {
+        groups[bot.group].push(result);
+      }
     });
     
-    // Berechne Gesamt-Konfidenz
+    Object.entries(groups).forEach(([groupId, groupResults]) => {
+      if (groupResults.length > 0) {
+        const group = BOT_GROUPS[groupId as keyof typeof BOT_GROUPS];
+        synthesis += `\n**${group.name}**:\n`;
+        groupResults.slice(0, 3).forEach(result => {
+          const bot = BOTS[result.bot as keyof typeof BOTS];
+          synthesis += `${bot.emoji} **${bot.name}** (${(result.confidence * 100).toFixed(0)}%):\n`;
+          result.responses.slice(0, 2).forEach(r => {
+            synthesis += `${r}\n`;
+          });
+        });
+      }
+    });
+    
     const avgConfidence = sorted.reduce((sum, r) => sum + r.confidence, 0) / sorted.length;
-    synthesis += `\n🎯 **Kollektive Konfidenz: ${(avgConfidence * 100).toFixed(1)}%**`;
+    synthesis += `\n\n🎯 **Kollektive Konfidenz: ${(avgConfidence * 100).toFixed(1)}%** | **${results.length} Bots aktiv**`;
     
     return synthesis;
   };
@@ -435,13 +917,11 @@ export default function BotCollective() {
     setInput("");
     setIsProcessing(true);
     
-    // Simuliere Verarbeitungszeit
     await new Promise(resolve => setTimeout(resolve, 500));
     
     const results = processWithCollective(input);
     
     if (collectiveMode) {
-      // Kollektive Antwort
       const synthesis = synthesizeCollective(results);
       const collectiveMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -452,278 +932,378 @@ export default function BotCollective() {
       };
       setMessages(prev => [...prev, collectiveMessage]);
     } else {
-      // Individuelle Bot-Antworten
       results.forEach((result, index) => {
-        setTimeout(() => {
-          const bot = BOTS[result.bot as keyof typeof BOTS];
-          const botMessage: Message = {
-            id: (Date.now() + index + 1).toString(),
-            type: "bot",
-            content: result.responses.join("\n"),
-            bot: result.bot,
-            confidence: result.confidence,
-            timestamp: new Date()
-          };
-          setMessages(prev => [...prev, botMessage]);
-        }, index * 300);
+        const bot = BOTS[result.bot as keyof typeof BOTS];
+        const botMessage: Message = {
+          id: (Date.now() + index + 1).toString(),
+          type: "bot",
+          content: result.responses.join("\n"),
+          bot: result.bot,
+          confidence: result.confidence,
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, botMessage]);
       });
     }
     
     setIsProcessing(false);
   };
 
+  const toggleGroup = (groupId: string) => {
+    const botsInGroup = Object.entries(BOTS)
+      .filter(([_, bot]) => bot.group === groupId)
+      .map(([id]) => id);
+    
+    const allActive = botsInGroup.every(id => activeBots[id]);
+    
+    setActiveBots(prev => {
+      const newState = { ...prev };
+      botsInGroup.forEach(id => {
+        newState[id] = !allActive;
+      });
+      return newState;
+    });
+  };
+
+  const activeBotCount = Object.values(activeBots).filter(Boolean).length;
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900/20 to-gray-900 p-4">
       {/* Header */}
-      <div className="border-b border-gray-700/50 bg-gray-900/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Link to="/">
-                <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white">
-                  <Home className="w-5 h-5" />
-                </Button>
-              </Link>
-              <div className="flex items-center gap-3">
-                <div className="relative">
-                  <Cpu className="w-8 h-8 text-cyan-400" />
-                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse" />
-                </div>
-                <div>
-                  <h1 className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
-                    Bot Collective
-                  </h1>
-                  <p className="text-xs text-gray-400">Lokale KI ohne API-Kosten</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-400">Kollektiv-Modus</span>
-                <Switch
-                  checked={collectiveMode}
-                  onCheckedChange={setCollectiveMode}
-                  className="data-[state=checked]:bg-cyan-500"
-                />
-              </div>
-              <Badge variant="outline" className="border-green-500 text-green-400">
-                <CheckCircle className="w-3 h-3 mr-1" />
-                {Object.values(activeBots).filter(Boolean).length} Bots aktiv
-              </Badge>
-            </div>
+      <div className="max-w-7xl mx-auto mb-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Link to="/">
+              <Button variant="outline" size="sm" className="border-purple-500/50">
+                <Home className="w-4 h-4 mr-2" />
+                Home
+              </Button>
+            </Link>
+            <Link to="/brain-wallet">
+              <Button variant="outline" size="sm" className="border-cyan-500/50">
+                <Brain className="w-4 h-4 mr-2" />
+                Brain Scanner
+              </Button>
+            </Link>
+          </div>
+          
+          <div className="text-center">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-400 via-pink-500 to-amber-400 bg-clip-text text-transparent flex items-center gap-3">
+              <Sparkles className="w-8 h-8 text-purple-400" />
+              BOT KOLLEKTIV 24
+              <Sparkles className="w-8 h-8 text-amber-400" />
+            </h1>
+            <p className="text-gray-400 text-sm">24 Spezialisierte Bots • Kollektive Intelligenz • Blockchain APIs</p>
+          </div>
+          
+          <div className="flex items-center gap-4">
+            <Badge className="bg-green-500/20 text-green-400 px-4 py-2 text-lg">
+              {activeBotCount}/24 AKTIV
+            </Badge>
           </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Bot Panel */}
-          <div className="lg:col-span-1">
-            <Card className="bg-gray-800/50 border-gray-700 p-4">
-              <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                <Bot className="w-5 h-5 text-cyan-400" />
-                Aktive Bots
-              </h2>
-              
-              <div className="space-y-3">
-                {Object.entries(BOTS).map(([id, bot]) => {
-                  const Icon = bot.icon;
-                  return (
-                    <div
-                      key={id}
-                      className={`p-3 rounded-lg border transition-all cursor-pointer ${
-                        activeBots[id]
-                          ? "bg-gray-700/50 border-gray-600"
-                          : "bg-gray-800/30 border-gray-700/50 opacity-50"
-                      }`}
-                      onClick={() => setActiveBots(prev => ({ ...prev, [id]: !prev[id] }))}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${bot.color} flex items-center justify-center`}>
-                            <Icon className="w-4 h-4 text-white" />
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium text-white">{bot.emoji} {bot.name}</p>
-                            <p className="text-xs text-gray-400">{bot.specialty}</p>
-                          </div>
-                        </div>
-                        <div className={`w-2 h-2 rounded-full ${activeBots[id] ? "bg-green-500 animate-pulse" : "bg-gray-600"}`} />
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-              
-              <div className="mt-4 p-3 bg-gray-900/50 rounded-lg border border-gray-700">
-                <p className="text-xs text-gray-400 mb-2">💡 Tipp</p>
-                <p className="text-xs text-gray-300">
-                  Im Kollektiv-Modus werden alle Antworten zusammengefasst. Deaktiviere ihn für individuelle Bot-Antworten.
-                </p>
-              </div>
-            </Card>
-          </div>
+      <div className="max-w-7xl mx-auto grid grid-cols-12 gap-4">
+        {/* Bot Übersicht - Links */}
+        <div className="col-span-3 space-y-3">
+          <Card className="bg-gray-800/50 border-purple-500/30 p-3">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-white font-bold">Kollektiv-Modus</span>
+              <Switch
+                checked={collectiveMode}
+                onCheckedChange={setCollectiveMode}
+              />
+            </div>
+            <p className="text-xs text-gray-400">
+              {collectiveMode ? "Alle Bots antworten zusammen" : "Einzelne Bot-Antworten"}
+            </p>
+          </Card>
 
-          {/* Chat Area */}
-          <div className="lg:col-span-3">
-            <Card className="bg-gray-800/50 border-gray-700 h-[calc(100vh-200px)] flex flex-col">
-              {/* Messages */}
-              <ScrollArea className="flex-1 p-4">
-                {messages.length === 0 ? (
-                  <div className="h-full flex flex-col items-center justify-center text-center">
-                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-cyan-500 to-purple-500 flex items-center justify-center mb-4">
-                      <Sparkles className="w-10 h-10 text-white" />
-                    </div>
-                    <h3 className="text-xl font-bold text-white mb-2">Bot Collective bereit!</h3>
-                    <p className="text-gray-400 max-w-md mb-6">
-                      Stelle Fragen zu Bitcoin-Puzzles, Kryptographie, Algorithmen oder Sicherheit. 
-                      Die spezialisierten Bots analysieren gemeinsam.
-                    </p>
-                    <div className="flex flex-wrap gap-2 justify-center">
-                      {["Wie löst man Puzzle #66?", "Erkläre secp256k1", "GPU Performance?", "Sicherheitsrisiken?"].map(q => (
-                        <Button
-                          key={q}
-                          variant="outline"
-                          size="sm"
-                          className="border-gray-600 text-gray-300 hover:bg-gray-700"
-                          onClick={() => setInput(q)}
-                        >
-                          {q}
-                        </Button>
-                      ))}
-                    </div>
+          {/* Bot Gruppen */}
+          {Object.entries(BOT_GROUPS).map(([groupId, group]) => {
+            const botsInGroup = Object.entries(BOTS).filter(([_, bot]) => bot.group === groupId);
+            const activeInGroup = botsInGroup.filter(([id]) => activeBots[id]).length;
+            
+            return (
+              <Card key={groupId} className="bg-gray-800/50 border-gray-700 p-3">
+                <div 
+                  className="flex items-center justify-between cursor-pointer mb-2"
+                  onClick={() => setActiveGroup(activeGroup === groupId ? null : groupId)}
+                >
+                  <div className="flex items-center gap-2">
+                    <div className={`w-3 h-3 rounded-full bg-gradient-to-r ${group.color}`} />
+                    <span className="text-white font-semibold text-sm">{group.name}</span>
                   </div>
-                ) : (
-                  <div className="space-y-4">
-                    {messages.map(msg => (
+                  <Badge className="bg-gray-700 text-gray-300 text-xs">
+                    {activeInGroup}/{botsInGroup.length}
+                  </Badge>
+                </div>
+                
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="w-full text-xs mb-2 border-gray-600"
+                  onClick={() => toggleGroup(groupId)}
+                >
+                  {activeInGroup === botsInGroup.length ? "Alle deaktivieren" : "Alle aktivieren"}
+                </Button>
+                
+                {(activeGroup === groupId || activeGroup === null) && (
+                  <div className="space-y-1 max-h-48 overflow-y-auto">
+                    {botsInGroup.map(([id, bot]) => (
                       <div
-                        key={msg.id}
-                        className={`flex ${msg.type === "user" ? "justify-end" : "justify-start"}`}
+                        key={id}
+                        className={`flex items-center justify-between p-1.5 rounded cursor-pointer transition-all ${
+                          activeBots[id] 
+                            ? `bg-gradient-to-r ${bot.color} bg-opacity-20` 
+                            : "bg-gray-700/30 opacity-50"
+                        }`}
+                        onClick={() => setActiveBots(prev => ({ ...prev, [id]: !prev[id] }))}
                       >
-                        <div
-                          className={`max-w-[80%] rounded-lg p-4 ${
-                            msg.type === "user"
-                              ? "bg-cyan-600 text-white"
-                              : msg.type === "collective"
-                              ? "bg-gradient-to-br from-purple-900/50 to-cyan-900/50 border border-purple-500/30"
-                              : "bg-gray-700/50 border border-gray-600"
-                          }`}
-                        >
-                          {msg.type !== "user" && (
-                            <div className="flex items-center gap-2 mb-2">
-                              {msg.type === "collective" ? (
-                                <Badge className="bg-purple-500/20 text-purple-300 border-purple-500/30">
-                                  <Network className="w-3 h-3 mr-1" />
-                                  Kollektiv
-                                </Badge>
-                              ) : msg.bot && (
-                                <Badge 
-                                  className={`bg-gradient-to-r ${BOTS[msg.bot as keyof typeof BOTS]?.color} text-white border-0`}
-                                >
-                                  {BOTS[msg.bot as keyof typeof BOTS]?.emoji} {BOTS[msg.bot as keyof typeof BOTS]?.name}
-                                </Badge>
-                              )}
-                              {msg.confidence && (
-                                <span className="text-xs text-gray-400">
-                                  {(msg.confidence * 100).toFixed(0)}% Konfidenz
-                                </span>
-                              )}
-                            </div>
-                          )}
-                          <div className="text-sm whitespace-pre-wrap">
-                            {msg.content.split("**").map((part, i) => 
-                              i % 2 === 1 ? <strong key={i}>{part}</strong> : part
-                            )}
-                          </div>
-                          <div className="text-xs text-gray-400 mt-2">
-                            {msg.timestamp.toLocaleTimeString()}
-                          </div>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-sm">{bot.emoji}</span>
+                          <span className="text-white text-xs font-medium">{bot.name}</span>
                         </div>
+                        <div className={`w-2 h-2 rounded-full ${activeBots[id] ? "bg-green-400" : "bg-gray-600"}`} />
                       </div>
                     ))}
-                    
-                    {isProcessing && (
-                      <div className="flex justify-start">
-                        <div className="bg-gray-700/50 border border-gray-600 rounded-lg p-4 flex items-center gap-3">
-                          <div className="flex gap-1">
-                            {[0, 1, 2].map(i => (
-                              <div
-                                key={i}
-                                className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce"
-                                style={{ animationDelay: `${i * 0.1}s` }}
-                              />
-                            ))}
-                          </div>
-                          <span className="text-sm text-gray-400">Bots analysieren...</span>
-                        </div>
-                      </div>
-                    )}
                   </div>
                 )}
-              </ScrollArea>
-
-              {/* Input */}
-              <div className="p-4 border-t border-gray-700">
-                <div className="flex gap-2">
-                  <Textarea
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    placeholder="Stelle eine Frage an das Bot-Kollektiv..."
-                    className="flex-1 bg-gray-700/50 border-gray-600 text-white resize-none"
-                    rows={2}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && !e.shiftKey) {
-                        e.preventDefault();
-                        handleSubmit();
-                      }
-                    }}
-                  />
-                  <Button
-                    onClick={handleSubmit}
-                    disabled={isProcessing || !input.trim()}
-                    className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 px-6"
-                  >
-                    <Send className="w-5 h-5" />
-                  </Button>
-                </div>
-              </div>
-            </Card>
-          </div>
+              </Card>
+            );
+          })}
         </div>
 
-        {/* Bot Network Visualization */}
-        <Card className="mt-6 bg-gray-800/50 border-gray-700 p-6">
-          <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-            <Network className="w-5 h-5 text-cyan-400" />
-            Bot-Netzwerk Verbindungen
-          </h3>
-          
-          <div className="flex flex-wrap items-center justify-center gap-4">
-            {Object.entries(BOTS).map(([id, bot], index) => {
-              const Icon = bot.icon;
-              const isActive = activeBots[id];
-              return (
-                <div key={id} className="flex items-center gap-2">
-                  <div
-                    className={`w-12 h-12 rounded-xl bg-gradient-to-br ${bot.color} flex items-center justify-center transition-all ${
-                      isActive ? "scale-100 opacity-100" : "scale-90 opacity-40"
-                    }`}
-                  >
-                    <Icon className="w-6 h-6 text-white" />
+        {/* Chat - Mitte */}
+        <div className="col-span-6">
+          <Card className="bg-gray-800/50 border-purple-500/30 h-[calc(100vh-180px)] flex flex-col">
+            <div className="p-3 border-b border-gray-700 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <MessageSquare className="w-5 h-5 text-purple-400" />
+                <span className="text-white font-bold">Kollektiv-Chat</span>
+              </div>
+              <Badge className={`${collectiveMode ? "bg-purple-500" : "bg-gray-600"}`}>
+                {collectiveMode ? "KOLLEKTIV" : "EINZELN"}
+              </Badge>
+            </div>
+
+            <ScrollArea className="flex-1 p-4">
+              <div className="space-y-4">
+                {messages.length === 0 && (
+                  <div className="text-center py-10 text-gray-500">
+                    <Bot className="w-16 h-16 mx-auto mb-4 opacity-30" />
+                    <p className="text-lg">24 Bots warten auf deine Frage...</p>
+                    <p className="text-sm mt-2">Bitcoin, Ethereum, DeFi, NFTs, Mining, APIs...</p>
                   </div>
-                  {index < Object.keys(BOTS).length - 1 && (
-                    <ArrowRight className={`w-4 h-4 ${isActive ? "text-cyan-400" : "text-gray-600"}`} />
-                  )}
+                )}
+                
+                {messages.map(message => (
+                  <div
+                    key={message.id}
+                    className={`${
+                      message.type === "user"
+                        ? "ml-auto bg-blue-600 max-w-[80%]"
+                        : message.type === "collective"
+                        ? "bg-gradient-to-r from-purple-900/50 to-pink-900/50 border border-purple-500/30"
+                        : "bg-gray-700/50"
+                    } rounded-lg p-3`}
+                  >
+                    {message.type !== "user" && (
+                      <div className="flex items-center gap-2 mb-2">
+                        {message.type === "collective" ? (
+                          <>
+                            <Sparkles className="w-4 h-4 text-purple-400" />
+                            <span className="text-purple-400 font-bold text-sm">KOLLEKTIV</span>
+                          </>
+                        ) : (
+                          <>
+                            <span>{BOTS[message.bot as keyof typeof BOTS]?.emoji}</span>
+                            <span className="text-white font-bold text-sm">
+                              {BOTS[message.bot as keyof typeof BOTS]?.name}
+                            </span>
+                          </>
+                        )}
+                        {message.confidence && (
+                          <Badge className="bg-green-500/20 text-green-400 text-xs ml-auto">
+                            {(message.confidence * 100).toFixed(0)}%
+                          </Badge>
+                        )}
+                      </div>
+                    )}
+                    <div className="text-white text-sm whitespace-pre-wrap">
+                      {message.content}
+                    </div>
+                  </div>
+                ))}
+                
+                {isProcessing && (
+                  <div className="bg-gray-700/50 rounded-lg p-4">
+                    <div className="flex items-center gap-3">
+                      <div className="flex gap-1">
+                        {[...Array(5)].map((_, i) => (
+                          <div
+                            key={i}
+                            className="w-2 h-2 bg-purple-400 rounded-full animate-bounce"
+                            style={{ animationDelay: `${i * 0.1}s` }}
+                          />
+                        ))}
+                      </div>
+                      <span className="text-gray-400 text-sm">
+                        {activeBotCount} Bots analysieren...
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </ScrollArea>
+
+            <div className="p-3 border-t border-gray-700">
+              <div className="flex gap-2">
+                <Textarea
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Frage das Bot-Kollektiv... (Bitcoin, ETH, DeFi, APIs...)"
+                  className="bg-gray-900 border-gray-600 text-white resize-none"
+                  rows={2}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSubmit();
+                    }
+                  }}
+                />
+                <Button
+                  onClick={handleSubmit}
+                  disabled={isProcessing || !input.trim()}
+                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 px-6"
+                >
+                  <Send className="w-5 h-5" />
+                </Button>
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        {/* Netzwerk-Visualisierung - Rechts */}
+        <div className="col-span-3 space-y-3">
+          <Card className="bg-gray-800/50 border-amber-500/30 p-3">
+            <div className="text-center mb-3">
+              <Network className="w-8 h-8 mx-auto text-amber-400 mb-2" />
+              <span className="text-white font-bold">Netzwerk Status</span>
+            </div>
+            
+            {/* Animated Network Visualization */}
+            <div className="relative h-48 bg-gray-900/50 rounded-lg overflow-hidden">
+              <div className="absolute inset-0 flex items-center justify-center">
+                {/* Central Hub */}
+                <div className="relative">
+                  <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center animate-pulse">
+                    <Cpu className="w-6 h-6 text-white" />
+                  </div>
+                  
+                  {/* Orbiting Bots */}
+                  {Object.entries(BOTS).slice(0, 12).map(([id, bot], i) => {
+                    const angle = (i / 12) * 2 * Math.PI;
+                    const radius = 70;
+                    const x = Math.cos(angle) * radius;
+                    const y = Math.sin(angle) * radius;
+                    
+                    return (
+                      <div
+                        key={id}
+                        className={`absolute w-6 h-6 rounded-full flex items-center justify-center text-xs transition-all ${
+                          activeBots[id] 
+                            ? `bg-gradient-to-r ${bot.color}` 
+                            : "bg-gray-700 opacity-30"
+                        }`}
+                        style={{
+                          left: `calc(50% + ${x}px - 12px)`,
+                          top: `calc(50% + ${y}px - 12px)`,
+                        }}
+                      >
+                        {bot.emoji}
+                      </div>
+                    );
+                  })}
                 </div>
-              );
-            })}
-          </div>
-          
-          <p className="text-center text-gray-400 text-sm mt-4">
-            Alle aktiven Bots teilen ihr Wissen und analysieren gemeinsam
-          </p>
-        </Card>
+              </div>
+              
+              {/* Connection Lines Animation */}
+              <svg className="absolute inset-0 w-full h-full pointer-events-none">
+                {Object.entries(BOTS).slice(0, 12).map(([id], i) => {
+                  const angle = (i / 12) * 2 * Math.PI;
+                  const radius = 70;
+                  const x = Math.cos(angle) * radius + 96;
+                  const y = Math.sin(angle) * radius + 96;
+                  
+                  return activeBots[id] && (
+                    <line
+                      key={id}
+                      x1="96" y1="96"
+                      x2={x} y2={y}
+                      stroke="rgba(168, 85, 247, 0.3)"
+                      strokeWidth="1"
+                      className="animate-pulse"
+                    />
+                  );
+                })}
+              </svg>
+            </div>
+          </Card>
+
+          {/* Quick Stats */}
+          <Card className="bg-gray-800/50 border-cyan-500/30 p-3">
+            <div className="text-white font-bold mb-3 flex items-center gap-2">
+              <Activity className="w-4 h-4 text-cyan-400" />
+              Live Statistiken
+            </div>
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-gray-400">Core Bots:</span>
+                <span className="text-blue-400">{Object.entries(BOTS).filter(([id, b]) => b.group === "core" && activeBots[id]).length}/6</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-400">Extended:</span>
+                <span className="text-purple-400">{Object.entries(BOTS).filter(([id, b]) => b.group === "extended" && activeBots[id]).length}/6</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-400">Blockchain APIs:</span>
+                <span className="text-amber-400">{Object.entries(BOTS).filter(([id, b]) => b.group === "blockchain" && activeBots[id]).length}/12</span>
+              </div>
+              <div className="border-t border-gray-700 pt-2 mt-2">
+                <div className="flex justify-between font-bold">
+                  <span className="text-gray-300">Total Aktiv:</span>
+                  <span className="text-green-400">{activeBotCount}/24</span>
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          {/* Example Queries */}
+          <Card className="bg-gray-800/50 border-green-500/30 p-3">
+            <div className="text-white font-bold mb-2 text-sm">Beispiel-Fragen:</div>
+            <div className="space-y-1">
+              {[
+                "Bitcoin Puzzle #66 analysieren",
+                "Ethereum Gas Fees erklären",
+                "DeFi Protokolle vergleichen",
+                "NFT Metadata Standards"
+              ].map((q, i) => (
+                <Button
+                  key={i}
+                  variant="ghost"
+                  size="sm"
+                  className="w-full justify-start text-xs text-gray-400 hover:text-white hover:bg-gray-700"
+                  onClick={() => setInput(q)}
+                >
+                  <ArrowRight className="w-3 h-3 mr-2" />
+                  {q}
+                </Button>
+              ))}
+            </div>
+          </Card>
+        </div>
       </div>
     </div>
   );
