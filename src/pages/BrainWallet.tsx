@@ -150,6 +150,13 @@ const BrainWallet = () => {
                 <Skull className="w-3 h-3" />
                 SATAN SOLVER
               </a>
+              <a 
+                href="/bot-collective" 
+                className="px-2 py-1 text-xs bg-cyan-500/20 border border-cyan-500/50 rounded text-cyan-400 hover:bg-cyan-500/30 transition-colors flex items-center gap-1"
+              >
+                <Cpu className="w-3 h-3" />
+                BOT KOLLEKTIV
+              </a>
               <a href="/" className="text-xs text-green-500/50 hover:text-green-400">
                 ← Editor
               </a>
