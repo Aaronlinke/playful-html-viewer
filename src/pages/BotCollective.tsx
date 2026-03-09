@@ -236,42 +236,65 @@ export default function BotCollective() {
     setMemory({ entries: [], learnedFacts: {}, queryCount: 0 });
   };
 
+  const [showBotPanel, setShowBotPanel] = useState(false);
+  const [showStats, setShowStats] = useState(false);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900/20 to-gray-900 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900/20 to-gray-900 p-2 sm:p-4">
       {/* Header */}
-      <div className="max-w-7xl mx-auto mb-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
+      <div className="max-w-7xl mx-auto mb-3 sm:mb-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <Link to="/">
-              <Button variant="outline" size="sm" className="border-purple-500/50">
-                <Home className="w-4 h-4 mr-2" />Home
+              <Button variant="outline" size="sm" className="border-purple-500/50 h-8 text-xs sm:text-sm">
+                <Home className="w-3.5 h-3.5 sm:mr-2" /><span className="hidden sm:inline">Home</span>
               </Button>
             </Link>
             <Link to="/brain-wallet">
-              <Button variant="outline" size="sm" className="border-cyan-500/50">
-                <Brain className="w-4 h-4 mr-2" />Brain Scanner
+              <Button variant="outline" size="sm" className="border-cyan-500/50 h-8 text-xs sm:text-sm">
+                <Brain className="w-3.5 h-3.5 sm:mr-2" /><span className="hidden sm:inline">Brain Scanner</span>
               </Button>
             </Link>
+            <Badge className="bg-green-500/20 text-green-400 px-2 py-1 text-xs sm:text-sm sm:hidden">
+              {activeBotCount}/{BOT_COUNT}
+            </Badge>
           </div>
           
-          <div className="text-center">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-400 via-pink-500 to-amber-400 bg-clip-text text-transparent flex items-center gap-3">
-              <Sparkles className="w-8 h-8 text-purple-400" />
+          <div className="text-left sm:text-center flex-1">
+            <h1 className="text-xl sm:text-3xl font-bold bg-gradient-to-r from-purple-400 via-pink-500 to-amber-400 bg-clip-text text-transparent flex items-center gap-2">
+              <Sparkles className="w-5 h-5 sm:w-8 sm:h-8 text-purple-400" />
               BOT KOLLEKTIV {BOT_COUNT}
-              <Sparkles className="w-8 h-8 text-amber-400" />
             </h1>
-            <p className="text-gray-400 text-sm">{BOT_COUNT} Bots • 6 Gruppen • Kollektive Intelligenz • Bot-Gedächtnis</p>
+            <p className="text-gray-400 text-[10px] sm:text-sm">{BOT_COUNT} Bots • 6 Gruppen • Bot-Gedächtnis</p>
           </div>
           
-          <Badge className="bg-green-500/20 text-green-400 px-4 py-2 text-lg">
+          <Badge className="hidden sm:flex bg-green-500/20 text-green-400 px-4 py-2 text-lg">
             {activeBotCount}/{BOT_COUNT} AKTIV
           </Badge>
         </div>
+
+        {/* Mobile toggle buttons */}
+        <div className="flex gap-2 mt-2 sm:hidden">
+          <Button 
+            variant={showBotPanel ? "default" : "outline"} 
+            size="sm" className="flex-1 h-8 text-xs"
+            onClick={() => { setShowBotPanel(!showBotPanel); setShowStats(false); }}
+          >
+            <Bot className="w-3.5 h-3.5 mr-1" />Bots ({activeBotCount})
+          </Button>
+          <Button 
+            variant={showStats ? "default" : "outline"} 
+            size="sm" className="flex-1 h-8 text-xs"
+            onClick={() => { setShowStats(!showStats); setShowBotPanel(false); }}
+          >
+            <Activity className="w-3.5 h-3.5 mr-1" />Stats
+          </Button>
+        </div>
       </div>
 
-      <div className="max-w-7xl mx-auto grid grid-cols-12 gap-4">
-        {/* Bot-Panel Links */}
-        <div className="col-span-3 space-y-2">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-12 gap-3 sm:gap-4">
+        {/* Bot-Panel Links - mobile: collapsible */}
+        <div className={`${showBotPanel ? 'block' : 'hidden'} sm:block sm:col-span-3 space-y-2`}>
           <Card className="bg-gray-800/50 border-purple-500/30 p-3">
             <div className="flex items-center justify-between mb-2">
               <span className="text-white font-bold text-sm">Kollektiv-Modus</span>
@@ -302,15 +325,11 @@ export default function BotCollective() {
                 <span>Keywords gelernt:</span>
                 <span className="text-amber-400">{Object.keys(memory.learnedFacts).length}</span>
               </div>
-              <div className="flex justify-between">
-                <span>Einträge:</span>
-                <span className="text-amber-400">{memory.entries.length}</span>
-              </div>
             </div>
           </Card>
 
           {/* Bot Groups */}
-          <ScrollArea className="h-[calc(100vh-380px)]">
+          <ScrollArea className="h-[50vh] sm:h-[calc(100vh-380px)]">
             <div className="space-y-2 pr-2">
               {Object.entries(BOT_GROUPS).map(([groupId, group]) => {
                 const botsInGroup = Object.entries(ALL_BOTS).filter(([_, bot]) => bot.group === groupId);
@@ -336,11 +355,11 @@ export default function BotCollective() {
                       {activeInGroup === botsInGroup.length ? "Alle aus" : "Alle an"}
                     </Button>
                     
-                    <div className="space-y-0.5">
+                    <div className="grid grid-cols-2 sm:grid-cols-1 gap-0.5">
                       {botsInGroup.map(([id, bot]) => (
                         <div
                           key={id}
-                          className={`flex items-center justify-between p-1 rounded cursor-pointer transition-all text-[11px] ${
+                          className={`flex items-center justify-between p-1.5 sm:p-1 rounded cursor-pointer transition-all text-[11px] ${
                             activeBots[id] 
                               ? `bg-gradient-to-r ${bot.color} bg-opacity-20` 
                               : "bg-gray-700/30 opacity-40"
@@ -351,7 +370,7 @@ export default function BotCollective() {
                             <span className="text-xs">{bot.emoji}</span>
                             <span className="text-white font-medium">{bot.name}</span>
                           </div>
-                          <div className={`w-1.5 h-1.5 rounded-full ${activeBots[id] ? "bg-green-400" : "bg-gray-600"}`} />
+                          <div className={`w-2 h-2 rounded-full ${activeBots[id] ? "bg-green-400" : "bg-gray-600"}`} />
                         </div>
                       ))}
                     </div>
@@ -363,28 +382,39 @@ export default function BotCollective() {
         </div>
 
         {/* Chat Mitte */}
-        <div className="col-span-6">
-          <Card className="bg-gray-800/50 border-purple-500/30 h-[calc(100vh-180px)] flex flex-col">
-            <div className="p-3 border-b border-gray-700 flex items-center justify-between">
+        <div className="sm:col-span-6">
+          <Card className="bg-gray-800/50 border-purple-500/30 h-[calc(100vh-200px)] sm:h-[calc(100vh-180px)] flex flex-col">
+            <div className="p-2 sm:p-3 border-b border-gray-700 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <MessageSquare className="w-5 h-5 text-purple-400" />
-                <span className="text-white font-bold">Kollektiv-Chat</span>
+                <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 text-purple-400" />
+                <span className="text-white font-bold text-sm">Kollektiv-Chat</span>
               </div>
-              <Badge className={`${collectiveMode ? "bg-purple-500" : "bg-gray-600"}`}>
+              <Badge className={`text-[10px] sm:text-xs ${collectiveMode ? "bg-purple-500" : "bg-gray-600"}`}>
                 {collectiveMode ? "KOLLEKTIV" : "EINZELN"}
               </Badge>
             </div>
 
-            <ScrollArea className="flex-1 p-4">
-              <div className="space-y-4">
+            <ScrollArea className="flex-1 p-3 sm:p-4">
+              <div className="space-y-3 sm:space-y-4">
                 {messages.length === 0 && (
-                  <div className="text-center py-10 text-gray-500">
-                    <Bot className="w-16 h-16 mx-auto mb-4 opacity-30" />
-                    <p className="text-lg">{BOT_COUNT} Bots warten auf deine Frage...</p>
-                    <p className="text-sm mt-2">Bitcoin, Ethereum, DeFi, Layer 2, Bridges, Staking, NFTs...</p>
+                  <div className="text-center py-6 sm:py-10 text-gray-500">
+                    <Bot className="w-10 h-10 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 opacity-30" />
+                    <p className="text-sm sm:text-lg">{BOT_COUNT} Bots warten auf deine Frage...</p>
+                    <p className="text-xs sm:text-sm mt-2">Bitcoin, Ethereum, DeFi, Layer 2, Bridges, Staking...</p>
                     {memory.queryCount > 0 && (
-                      <p className="text-xs mt-2 text-amber-400/60">💾 {memory.queryCount} gespeicherte Anfragen im Gedächtnis</p>
+                      <p className="text-[10px] sm:text-xs mt-2 text-amber-400/60">💾 {memory.queryCount} gespeicherte Anfragen</p>
                     )}
+                    {/* Mobile example queries */}
+                    <div className="mt-4 flex flex-wrap gap-1.5 justify-center sm:hidden">
+                      {["Bitcoin Puzzle #66", "Lightning Network", "DeFi Staking", "ZK Proofs"].map((q, i) => (
+                        <Button key={i} variant="outline" size="sm"
+                          className="text-[10px] h-7 px-2 border-gray-600 text-gray-400"
+                          onClick={() => setInput(q)}
+                        >
+                          {q}
+                        </Button>
+                      ))}
+                    </div>
                   </div>
                 )}
                 
@@ -393,64 +423,64 @@ export default function BotCollective() {
                     key={message.id}
                     className={`${
                       message.type === "user"
-                        ? "ml-auto bg-blue-600 max-w-[80%]"
+                        ? "ml-auto bg-blue-600 max-w-[90%] sm:max-w-[80%]"
                         : message.type === "collective"
                         ? "bg-gradient-to-r from-purple-900/50 to-pink-900/50 border border-purple-500/30"
                         : "bg-gray-700/50"
-                    } rounded-lg p-3`}
+                    } rounded-lg p-2.5 sm:p-3`}
                   >
                     {message.type !== "user" && (
-                      <div className="flex items-center gap-2 mb-2">
+                      <div className="flex items-center gap-2 mb-1.5 sm:mb-2">
                         {message.type === "collective" ? (
                           <>
-                            <Sparkles className="w-4 h-4 text-purple-400" />
-                            <span className="text-purple-400 font-bold text-sm">KOLLEKTIV</span>
+                            <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-400" />
+                            <span className="text-purple-400 font-bold text-xs sm:text-sm">KOLLEKTIV</span>
                           </>
                         ) : (
                           <>
-                            <span>{ALL_BOTS[message.bot!]?.emoji}</span>
-                            <span className="text-white font-bold text-sm">
+                            <span className="text-sm">{ALL_BOTS[message.bot!]?.emoji}</span>
+                            <span className="text-white font-bold text-xs sm:text-sm">
                               {ALL_BOTS[message.bot!]?.name}
                             </span>
                           </>
                         )}
                         {message.confidence && (
-                          <Badge className="bg-green-500/20 text-green-400 text-xs ml-auto">
+                          <Badge className="bg-green-500/20 text-green-400 text-[10px] sm:text-xs ml-auto">
                             {(message.confidence * 100).toFixed(0)}%
                           </Badge>
                         )}
                       </div>
                     )}
-                    <div className="text-white text-sm whitespace-pre-wrap">
+                    <div className="text-white text-xs sm:text-sm whitespace-pre-wrap break-words">
                       {message.content}
                     </div>
                   </div>
                 ))}
                 
                 {isProcessing && (
-                  <div className="bg-gray-700/50 rounded-lg p-4">
+                  <div className="bg-gray-700/50 rounded-lg p-3 sm:p-4">
                     <div className="flex items-center gap-3">
                       <div className="flex gap-1">
                         {[...Array(5)].map((_, i) => (
-                          <div key={i} className="w-2 h-2 bg-purple-400 rounded-full animate-bounce"
+                          <div key={i} className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-purple-400 rounded-full animate-bounce"
                             style={{ animationDelay: `${i * 0.1}s` }} />
                         ))}
                       </div>
-                      <span className="text-gray-400 text-sm">{activeBotCount} Bots analysieren...</span>
+                      <span className="text-gray-400 text-xs sm:text-sm">{activeBotCount} Bots analysieren...</span>
                     </div>
                   </div>
                 )}
               </div>
             </ScrollArea>
 
-            <div className="p-3 border-t border-gray-700">
+            <div className="p-2 sm:p-3 border-t border-gray-700">
               <div className="flex gap-2">
                 <Textarea
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder={`Frage das ${BOT_COUNT}-Bot-Kollektiv...`}
-                  className="bg-gray-900 border-gray-600 text-white resize-none"
-                  rows={2}
+                  className="bg-gray-900 border-gray-600 text-white resize-none text-sm min-h-[44px]"
+                  rows={1}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && !e.shiftKey) {
                       e.preventDefault();
@@ -461,41 +491,41 @@ export default function BotCollective() {
                 <Button
                   onClick={handleSubmit}
                   disabled={isProcessing || !input.trim()}
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 px-6"
+                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 px-4 sm:px-6 h-auto min-h-[44px]"
                 >
-                  <Send className="w-5 h-5" />
+                  <Send className="w-4 h-4 sm:w-5 sm:h-5" />
                 </Button>
               </div>
             </div>
           </Card>
         </div>
 
-        {/* Rechte Seite */}
-        <div className="col-span-3 space-y-3">
+        {/* Rechte Seite - mobile: collapsible */}
+        <div className={`${showStats ? 'block' : 'hidden'} sm:block sm:col-span-3 space-y-3`}>
           {/* Network Visualization */}
           <Card className="bg-gray-800/50 border-amber-500/30 p-3">
             <div className="text-center mb-2">
-              <Network className="w-6 h-6 mx-auto text-amber-400 mb-1" />
-              <span className="text-white font-bold text-sm">Netzwerk Status</span>
+              <Network className="w-5 h-5 sm:w-6 sm:h-6 mx-auto text-amber-400 mb-1" />
+              <span className="text-white font-bold text-xs sm:text-sm">Netzwerk Status</span>
             </div>
             
-            <div className="relative h-44 bg-gray-900/50 rounded-lg overflow-hidden">
+            <div className="relative h-36 sm:h-44 bg-gray-900/50 rounded-lg overflow-hidden">
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="relative">
-                  <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center animate-pulse">
-                    <Cpu className="w-5 h-5 text-white" />
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center animate-pulse">
+                    <Cpu className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                   </div>
                   {Object.entries(ALL_BOTS).slice(0, 16).map(([id, bot], i) => {
                     const angle = (i / 16) * 2 * Math.PI;
-                    const radius = 65;
+                    const radius = 55;
                     const x = Math.cos(angle) * radius;
                     const y = Math.sin(angle) * radius;
                     return (
                       <div key={id}
-                        className={`absolute w-5 h-5 rounded-full flex items-center justify-center text-[9px] transition-all ${
+                        className={`absolute w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center text-[8px] sm:text-[9px] transition-all ${
                           activeBots[id] ? `bg-gradient-to-r ${bot.color}` : "bg-gray-700 opacity-30"
                         }`}
-                        style={{ left: `calc(50% + ${x}px - 10px)`, top: `calc(50% + ${y}px - 10px)` }}
+                        style={{ left: `calc(50% + ${x}px - 8px)`, top: `calc(50% + ${y}px - 8px)` }}
                       >
                         {bot.emoji}
                       </div>
@@ -503,24 +533,12 @@ export default function BotCollective() {
                   })}
                 </div>
               </div>
-              <svg className="absolute inset-0 w-full h-full pointer-events-none">
-                {Object.entries(ALL_BOTS).slice(0, 16).map(([id], i) => {
-                  const angle = (i / 16) * 2 * Math.PI;
-                  const r = 65;
-                  const cx = 88, cy = 88;
-                  return activeBots[id] && (
-                    <line key={id} x1={cx} y1={cy}
-                      x2={cx + Math.cos(angle) * r} y2={cy + Math.sin(angle) * r}
-                      stroke="rgba(168, 85, 247, 0.25)" strokeWidth="1" className="animate-pulse" />
-                  );
-                })}
-              </svg>
             </div>
           </Card>
 
           {/* Stats */}
           <Card className="bg-gray-800/50 border-cyan-500/30 p-3">
-            <div className="text-white font-bold mb-2 flex items-center gap-2 text-sm">
+            <div className="text-white font-bold mb-2 flex items-center gap-2 text-xs sm:text-sm">
               <Activity className="w-4 h-4 text-cyan-400" />
               Live Statistiken
             </div>
@@ -547,7 +565,7 @@ export default function BotCollective() {
           {/* Example Queries */}
           <Card className="bg-gray-800/50 border-green-500/30 p-3">
             <div className="text-white font-bold mb-2 text-xs">Beispiel-Fragen:</div>
-            <div className="space-y-1">
+            <div className="grid grid-cols-2 sm:grid-cols-1 gap-1">
               {[
                 "Bitcoin Puzzle #66 analysieren",
                 "Lightning Network erklären",
@@ -557,10 +575,10 @@ export default function BotCollective() {
                 "Zero Knowledge Proofs"
               ].map((q, i) => (
                 <Button key={i} variant="ghost" size="sm"
-                  className="w-full justify-start text-[11px] text-gray-400 hover:text-white hover:bg-gray-700 h-7"
+                  className="w-full justify-start text-[10px] sm:text-[11px] text-gray-400 hover:text-white hover:bg-gray-700 h-7 px-2"
                   onClick={() => setInput(q)}
                 >
-                  <ArrowRight className="w-3 h-3 mr-1.5 shrink-0" />{q}
+                  <ArrowRight className="w-3 h-3 mr-1 shrink-0" /><span className="truncate">{q}</span>
                 </Button>
               ))}
             </div>
