@@ -252,7 +252,7 @@ serve(async (req) => {
     console.log(`🤖 Agent ${agentName} (${agentRole}) startet... Modus: ${swarmMode || 'standard'}`);
 
     // Erweiterte Prompt-Generierung
-    let systemPrompt = AGENT_PROMPTS[agentName] || `Du bist Agent ${agentName}, spezialisiert auf ${agentRole}.`;
+    let systemPrompt = (AGENT_PROMPTS[agentName] || `Du bist Agent ${agentName}, spezialisiert auf ${agentRole}.`) + GLOBAL_DIRECTIVE;
     
     // Krypto-API Kontext hinzufügen
     if (cryptoApis && cryptoApis.length > 0) {
