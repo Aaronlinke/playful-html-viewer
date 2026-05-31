@@ -213,6 +213,15 @@ const HtmlEditor = () => {
         
         {/* Desktop buttons */}
         <div className="hidden sm:flex items-center gap-2">
+          <Link to="/bot-collective">
+            <Button variant="outline" size="sm"><Sparkles className="w-4 h-4 mr-2" />Kollektiv</Button>
+          </Link>
+          <Link to="/brain-scanner">
+            <Button variant="outline" size="sm"><Brain className="w-4 h-4 mr-2" />Brain</Button>
+          </Link>
+          <Link to="/satan-solver">
+            <Button variant="outline" size="sm"><Skull className="w-4 h-4 mr-2" />Satan</Button>
+          </Link>
           <label htmlFor="file-upload">
             <input id="file-upload" type="file" accept=".html,.htm" multiple onChange={handleFileUpload} className="hidden" />
             <Button variant="outline" size="sm" asChild className="cursor-pointer">
@@ -253,6 +262,21 @@ const HtmlEditor = () => {
       {/* Mobile menu dropdown */}
       {showMobileMenu && isMobile && (
         <div className="flex flex-wrap gap-1.5 p-2 bg-card border-b border-border sm:hidden">
+          <Link to="/bot-collective" onClick={() => setShowMobileMenu(false)}>
+            <Button variant="outline" size="sm" className="h-8 text-xs">
+              <Sparkles className="w-3 h-3 mr-1" />Kollektiv
+            </Button>
+          </Link>
+          <Link to="/brain-scanner" onClick={() => setShowMobileMenu(false)}>
+            <Button variant="outline" size="sm" className="h-8 text-xs">
+              <Brain className="w-3 h-3 mr-1" />Brain
+            </Button>
+          </Link>
+          <Link to="/satan-solver" onClick={() => setShowMobileMenu(false)}>
+            <Button variant="outline" size="sm" className="h-8 text-xs">
+              <Skull className="w-3 h-3 mr-1" />Satan
+            </Button>
+          </Link>
           <Button variant="outline" size="sm" className="h-8 text-xs" onClick={() => { handleCopy(); setShowMobileMenu(false); }}>
             <Copy className="w-3 h-3 mr-1" />Kopieren
           </Button>
