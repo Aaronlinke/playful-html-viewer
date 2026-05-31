@@ -47,7 +47,7 @@ function saveMemory(mem: BotMemoryStore) {
 function recordQuery(query: string, results: BotResponse[]) {
   const mem = loadMemory();
   const topBots = results
-    .filter(r => r.responses.length > 1 || r.confidence > 0.9)
+    .filter(r => r.matched)
     .sort((a, b) => b.confidence - a.confidence)
     .slice(0, 5)
     .map(r => r.bot);
@@ -55,7 +55,6 @@ function recordQuery(query: string, results: BotResponse[]) {
   mem.entries.push({ query, topBots, timestamp: Date.now() });
   mem.queryCount++;
   
-  // Learn which bots are most relevant per keyword
   const words = query.toLowerCase().split(/\s+/).filter(w => w.length > 3);
   words.forEach(word => {
     if (!mem.learnedFacts[word]) mem.learnedFacts[word] = [];
@@ -64,7 +63,6 @@ function recordQuery(query: string, results: BotResponse[]) {
         mem.learnedFacts[word].push(botId);
       }
     });
-    // Keep max 5 bots per keyword
     mem.learnedFacts[word] = mem.learnedFacts[word].slice(0, 5);
   });
   
