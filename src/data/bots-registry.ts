@@ -12,6 +12,8 @@ export interface BotResponse {
   bot: string;
   responses: string[];
   confidence: number;
+  matched: boolean;
+  matchCount: number;
 }
 
 export interface BotDefinition {
@@ -36,13 +38,19 @@ function makeBot(
     analyze: (input: string) => {
       const low = input.toLowerCase();
       const matched: string[] = [];
+      let matchCount = 0;
       keywords.forEach((kws, i) => {
         if (kws.some(k => low.includes(k))) {
+          matchCount++;
           responses[i].forEach(r => matched.push(r));
         }
       });
-      if (matched.length === 0) matched.push(defaultMsg);
-      return { bot: id, responses: matched, confidence: baseConf + Math.random() * 0.12 };
+      const isMatch = matched.length > 0;
+      if (!isMatch) matched.push(defaultMsg);
+      const conf = isMatch
+        ? Math.min(0.99, baseConf + matchCount * 0.04 + Math.random() * 0.05)
+        : baseConf * 0.55 + Math.random() * 0.05;
+      return { bot: id, responses: matched, confidence: conf, matched: isMatch, matchCount };
     }
   };
 }
