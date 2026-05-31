@@ -252,7 +252,7 @@ export default function BotCollective() {
                 <Home className="w-3.5 h-3.5 sm:mr-2" /><span className="hidden sm:inline">Home</span>
               </Button>
             </Link>
-            <Link to="/brain-wallet">
+            <Link to="/brain-scanner">
               <Button variant="outline" size="sm" className="border-cyan-500/50 h-8 text-xs sm:text-sm">
                 <Brain className="w-3.5 h-3.5 sm:mr-2" /><span className="hidden sm:inline">Brain Scanner</span>
               </Button>
