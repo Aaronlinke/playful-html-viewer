@@ -1,9 +1,10 @@
 import { useState, useCallback, useEffect } from "react";
-import { Code2, Play, Copy, Trash2, FileCode, Download, Plus, X, Bot, Menu, Eye, Edit3 } from "lucide-react";
+import { Code2, Play, Copy, Trash2, FileCode, Download, Plus, X, Bot, Menu, Eye, Edit3, Sparkles, Brain, Skull } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Link } from "react-router-dom";
 import AiAgentPanel from "./AiAgentPanel";
 
 interface Tab {
