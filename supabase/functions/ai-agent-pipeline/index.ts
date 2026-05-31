@@ -267,14 +267,14 @@ Nutze diese APIs für:
 - DeFi Dashboard Elemente`;
     }
 
-    // Vorherige Outputs im Schwarm-Modus
-    if (swarmMode === "collective" && previousOutputs && previousOutputs.length > 0) {
-      systemPrompt += `\n\n🧠 SCHWARM-KONTEXT - Vorherige Agenten haben folgende Erkenntnisse:
-${previousOutputs.map((p: { agent: string; output: string }) => 
-  `[${p.agent}]: ${p.output.substring(0, 500)}...`
+    // Vorherige Outputs im Schwarm-Modus (collective ODER fusion-final)
+    if ((swarmMode === "collective" || swarmMode === "fusion-final") && previousOutputs && previousOutputs.length > 0) {
+      systemPrompt += `\n\n🧠 SCHWARM-KONTEXT - Vorherige Agenten-Outputs:
+${previousOutputs.map((p: { agent: string; output: string; confidence?: number }) => 
+  `[${p.agent}${p.confidence ? ` ${p.confidence}%` : ''}]: ${p.output.substring(0, 800)}`
 ).join('\n\n')}
 
-Baue auf diesen Erkenntnissen auf und erweitere sie.`;
+Baue auf diesen Erkenntnissen auf, integriere die besten Ideen und erweitere sie konsequent.`;
     }
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -289,8 +289,8 @@ Baue auf diesen Erkenntnissen auf und erweitere sie.`;
           { role: "system", content: systemPrompt },
           { role: "user", content: context },
         ],
-        max_tokens: 8000,
-        temperature: 0.7,
+        max_tokens: 16000,
+        temperature: agentName === "FUSION" || isLastAgent ? 0.6 : 0.8,
       }),
     });
 

@@ -47,7 +47,7 @@ function saveMemory(mem: BotMemoryStore) {
 function recordQuery(query: string, results: BotResponse[]) {
   const mem = loadMemory();
   const topBots = results
-    .filter(r => r.responses.length > 1 || r.confidence > 0.9)
+    .filter(r => r.matched)
     .sort((a, b) => b.confidence - a.confidence)
     .slice(0, 5)
     .map(r => r.bot);
@@ -55,7 +55,6 @@ function recordQuery(query: string, results: BotResponse[]) {
   mem.entries.push({ query, topBots, timestamp: Date.now() });
   mem.queryCount++;
   
-  // Learn which bots are most relevant per keyword
   const words = query.toLowerCase().split(/\s+/).filter(w => w.length > 3);
   words.forEach(word => {
     if (!mem.learnedFacts[word]) mem.learnedFacts[word] = [];
@@ -64,7 +63,6 @@ function recordQuery(query: string, results: BotResponse[]) {
         mem.learnedFacts[word].push(botId);
       }
     });
-    // Keep max 5 bots per keyword
     mem.learnedFacts[word] = mem.learnedFacts[word].slice(0, 5);
   });
   
@@ -104,21 +102,19 @@ export default function BotCollective() {
     return results;
   }, [activeBots]);
 
-  const synthesizeCollective = (results: BotResponse[]): string => {
+  const synthesizeCollective = (results: BotResponse[], userInput: string): string => {
     if (results.length === 0) return "Keine aktiven Bots verfügbar.";
     
-    const sorted = [...results].sort((a, b) => b.confidence - a.confidence);
+    const matched = results.filter(r => r.matched).sort((a, b) => b.confidence - a.confidence);
+    const unmatched = results.filter(r => !r.matched);
     
-    // Split into bots with specific matches vs default responses
-    const specific = sorted.filter(r => r.responses.length > 1);
-    const defaults = sorted.filter(r => r.responses.length === 1);
+    let synthesis = `🤖 **KOLLEKTIV-SYNTHESE** — ${matched.length} Treffer von ${results.length} Bots\n`;
+    synthesis += `📝 Anfrage: "${userInput}"\n\n`;
     
-    let synthesis = `🤖 **KOLLEKTIV-SYNTHESE** (${results.length} BOTS AKTIV)\n\n`;
-    
-    if (specific.length > 0) {
-      // Group specific results by bot group
+    if (matched.length > 0) {
+      // Group matches by bot group
       const groups: Record<string, BotResponse[]> = {};
-      specific.forEach(result => {
+      matched.forEach(result => {
         const bot = ALL_BOTS[result.bot];
         if (bot) {
           if (!groups[bot.group]) groups[bot.group] = [];
@@ -129,39 +125,44 @@ export default function BotCollective() {
       Object.entries(groups).forEach(([groupId, groupResults]) => {
         const group = BOT_GROUPS[groupId];
         if (group) {
-          synthesis += `\n**${group.name}**:\n`;
+          synthesis += `\n━━━ **${group.name}** (${groupResults.length}) ━━━\n`;
           groupResults.forEach(result => {
             const bot = ALL_BOTS[result.bot];
-            synthesis += `${bot.emoji} **${bot.name}** (${(result.confidence * 100).toFixed(0)}%):\n`;
+            synthesis += `\n${bot.emoji} **${bot.name}** · ${(result.confidence * 100).toFixed(0)}%\n`;
             result.responses.forEach(r => {
-              synthesis += `  ${r}\n`;
+              synthesis += `  • ${r}\n`;
             });
-            synthesis += `\n`;
           });
         }
       });
-    } else {
-      // No specific matches - show all active bots' default responses
-      synthesis += `📡 **Alle ${results.length} Bots bereit** - kein spezifischer Treffer.\n`;
-      synthesis += `Versuche spezifischere Keywords wie: Bitcoin, Ethereum, DeFi, Mining, Lightning, Staking, NFT, Privacy, Smart Contract, Bridge...\n\n`;
       
-      // Show a few defaults as hints
-      synthesis += `**Aktive Spezialisten:**\n`;
-      defaults.slice(0, 8).forEach(result => {
+      // Konsens-Block
+      synthesis += `\n\n🎯 **KONSENS**:\n`;
+      const topGroup = Object.entries(groups).sort((a, b) => b[1].length - a[1].length)[0];
+      if (topGroup) {
+        synthesis += `• Dominantes Themenfeld: **${BOT_GROUPS[topGroup[0]]?.name}**\n`;
+      }
+      const top = matched[0];
+      synthesis += `• Höchste Konfidenz: ${ALL_BOTS[top.bot].emoji} ${ALL_BOTS[top.bot].name} (${(top.confidence * 100).toFixed(0)}%)\n`;
+    } else {
+      synthesis += `📡 Keine spezifischen Treffer.\n`;
+      synthesis += `Versuche Keywords wie: Bitcoin, Ethereum, DeFi, Mining, Lightning, Staking, NFT, Privacy, Smart Contract, Bridge, ZK, Cosmos, Solana...\n\n`;
+      synthesis += `**Bereitstehende Spezialisten** (Auszug):\n`;
+      unmatched.slice(0, 8).forEach(result => {
         const bot = ALL_BOTS[result.bot];
-        synthesis += `${bot.emoji} ${bot.name}: ${bot.specialty}\n`;
+        synthesis += `${bot.emoji} ${bot.name} — ${bot.specialty}\n`;
       });
-      synthesis += `... und ${Math.max(0, defaults.length - 8)} weitere\n`;
     }
     
-    // Memory context
     const mem = loadMemory();
     if (mem.queryCount > 0) {
-      synthesis += `\n💾 **Bot-Gedächtnis**: ${mem.queryCount} Anfragen gespeichert, ${Object.keys(mem.learnedFacts).length} Keywords gelernt`;
+      synthesis += `\n💾 Bot-Gedächtnis: ${mem.queryCount} Anfragen · ${Object.keys(mem.learnedFacts).length} Keywords gelernt`;
     }
     
-    const avgConfidence = sorted.reduce((sum, r) => sum + r.confidence, 0) / sorted.length;
-    synthesis += `\n🎯 **Kollektive Konfidenz: ${(avgConfidence * 100).toFixed(1)}%** | **${results.length}/${BOT_COUNT} Bots aktiv**`;
+    const avgConfidence = matched.length > 0
+      ? matched.reduce((sum, r) => sum + r.confidence, 0) / matched.length
+      : 0;
+    synthesis += `\n⚡ Kollektive Konfidenz: **${(avgConfidence * 100).toFixed(1)}%** · ${results.length}/${BOT_COUNT} Bots aktiv`;
     
     return synthesis;
   };
@@ -185,23 +186,24 @@ export default function BotCollective() {
     
     const results = processWithCollective(userInput);
     
-    // Record to memory
     const updatedMem = recordQuery(userInput, results);
     setMemory(updatedMem);
     
     if (collectiveMode) {
-      const synthesis = synthesizeCollective(results);
+      const synthesis = synthesizeCollective(results, userInput);
+      const matched = results.filter(r => r.matched);
       setMessages(prev => [...prev, {
         id: (Date.now() + 1).toString(),
         type: "collective",
         content: synthesis,
-        confidence: results.reduce((sum, r) => sum + r.confidence, 0) / results.length,
+        confidence: matched.length > 0
+          ? matched.reduce((sum, r) => sum + r.confidence, 0) / matched.length
+          : 0,
         timestamp: new Date()
       }]);
     } else {
-      // Show only bots with specific answers, plus top 3 defaults
-      const specific = results.filter(r => r.responses.length > 1);
-      const toShow = specific.length > 0 ? specific : results.slice(0, 5);
+      const matched = results.filter(r => r.matched).sort((a, b) => b.confidence - a.confidence);
+      const toShow = matched.length > 0 ? matched : results.slice(0, 3);
       
       toShow.forEach((result, index) => {
         setMessages(prev => [...prev, {
@@ -250,7 +252,7 @@ export default function BotCollective() {
                 <Home className="w-3.5 h-3.5 sm:mr-2" /><span className="hidden sm:inline">Home</span>
               </Button>
             </Link>
-            <Link to="/brain-wallet">
+            <Link to="/brain-scanner">
               <Button variant="outline" size="sm" className="border-cyan-500/50 h-8 text-xs sm:text-sm">
                 <Brain className="w-3.5 h-3.5 sm:mr-2" /><span className="hidden sm:inline">Brain Scanner</span>
               </Button>
